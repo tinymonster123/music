@@ -12,6 +12,17 @@ export default {
         background: "var(--background)",
         foreground: "var(--foreground)",
       },
+      backgroundColor: {
+        pink: {
+          base: "#ff79b0",
+          crimson: "#FF4081",
+        },
+      },
+      fontFamily: {
+        mona: ["var(--font-mona-sans)"],
+        serif: ["var(--font-source-serif)"],
+        helveticaRounded: ["var(--font-helveticaRounded)"],
+      },
     },
   },
   plugins: [],
