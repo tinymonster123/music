@@ -1,9 +1,9 @@
-import TopBar from "./component/topBar";
+import HomePage from "./pages/homepage";
 
 const Home = () => {
   return (
     <>
-      <TopBar />
+      <HomePage />
     </>
   );
 };
