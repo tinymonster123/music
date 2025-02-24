@@ -1,15 +1,24 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import localFont from "next/font/local";
+import React from "react";
 import "./globals.css";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
+const monaSans = localFont({
+  src: "../assets/font/Mona-Sans.ttf",
+  variable: "--font-mona-sans",
+  display: "swap",
 });
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
+const sourceSerif = localFont({
+  src: "../assets/font/SourceSerif4[opsz,wght].ttf",
+  variable: "--font-source-serif",
+  display: "swap",
+});
+
+const helveticaRounded = localFont({
+  src: "../assets/font/helvetica-rounded-bold-5871d05ead8de.otf",
+  variable: "--font-helveticaRounded",
+  display: "swap",
 });
 
 export const metadata: Metadata = {
@@ -25,7 +34,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${monaSans.variable} ${sourceSerif.variable} ${helveticaRounded.variable} antialiased`}
       >
         {children}
       </body>
