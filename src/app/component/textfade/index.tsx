@@ -5,14 +5,14 @@ import * as React from "react";
 
 const TextFade = ({
   direction,
-  delay,
-  duration,
+  delay = 0,
+  duration = 0,
   children,
   className = "",
   staggerChildren = 0.1,
 }: {
-  delay:number,
-  duration:number,
+  delay?: number;
+  duration?: number;
   direction: "up" | "down";
   children: React.ReactNode;
   className?: string;
@@ -34,8 +34,8 @@ const TextFade = ({
         show: {
           transition: {
             staggerChildren: staggerChildren,
-            duration:duration,
-            delay:delay,
+            duration: duration,
+            delay: delay,
           },
         },
       }}
@@ -52,4 +52,4 @@ const TextFade = ({
   );
 };
 
-export default TextFade
+export default TextFade;

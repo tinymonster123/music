@@ -4,6 +4,8 @@ import SvgIcon from "@/app/component/passionate";
 import SVGLetter from "../../../assets/images/letter.svg";
 import TextFade from "@/app/component/textfade";
 import GradualSpacing from "@/app/component/gradualspace";
+import TypingEffect from "@/app/component/typing";
+import BlurIn from "@/app/component/blurin";
 
 const Introduction = () => {
   const [ifStart, setStart] = useState(false);
@@ -23,7 +25,7 @@ const Introduction = () => {
                 : "-translate-x-full opacity-0"
             }`}
           >
-            <div className="flex justify-center md:justify-end">
+            <div className="flex justify-end md:justify-end ">
               <SvgIcon className="w-32 h-32 md:w-48 md:h-48 transform-gpu hover:scale-105 transition-transform" />
             </div>
           </div>
@@ -41,16 +43,28 @@ const Introduction = () => {
             <div className="flex flex-col items-center md:items-start gap-6 text-black">
               <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight">
                 <GradualSpacing text="Build for music" />
-                <span className="text-[#ff0000]"><GradualSpacing text="Lover" delay={2}/></span>
+                <span className="text-[#ff0000]">
+                  <GradualSpacing text="Lover" delay={2} />
+                </span>
               </h1>
 
               <p className="text-lg md:text-xl text-gray-700 font-medium">
-                Search for music that suits your taste
+                <TypingEffect
+                  delay={3}
+                  text=" Search for music that suits your taste"
+                />
               </p>
-              <button className="mt-4 px-8 py-3 bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-full font-medium hover:shadow-lg transform hover:-translate-y-0.5 transition-all">
-                Get Started
-              </button>
-              <p className="text-sm text-gray-500 mt-8">
+              <BlurIn delay={5.5}>
+                <button className="mt-4 px-8 py-3 bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-full font-medium hover:shadow-lg transform hover:-translate-y-0.5 transition-all">
+                  Get Started
+                </button>
+              </BlurIn>
+              <TextFade
+                direction="up"
+                delay={5}
+                duration={2}
+                className="text-sm text-gray-500 mt-8"
+              >
                 @copyright Database from{" "}
                 <a
                   href="https://metabrainz.org/datasets/postgres-dumps#musicbrainz"
@@ -60,7 +74,7 @@ const Introduction = () => {
                 >
                   MusicBrainz Database
                 </a>
-              </p>
+              </TextFade>
             </div>
           </div>
         </div>
