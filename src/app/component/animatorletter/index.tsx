@@ -6,7 +6,7 @@ const AnimatorLetter = () => {
   console.log(SVGPath);
 
   return (
-    <div className="w-full h-screen flex items-center justify-center bg-white">
+    <div className="w-full h-screen flex items-center justify-center bg-white transform-gpu">
       <Animator
         pathAnimation={{
           type: "tween",

@@ -1,13 +1,18 @@
 "use client";
 import { motion, useInView } from "framer-motion";
+import { del } from "framer-motion/client";
 import * as React from "react";
 
 const TextFade = ({
   direction,
+  delay,
+  duration,
   children,
   className = "",
   staggerChildren = 0.1,
 }: {
+  delay:number,
+  duration:number,
   direction: "up" | "down";
   children: React.ReactNode;
   className?: string;
@@ -29,6 +34,8 @@ const TextFade = ({
         show: {
           transition: {
             staggerChildren: staggerChildren,
+            duration:duration,
+            delay:delay,
           },
         },
       }}

@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import SvgIcon from "@/app/component/passionate";
 import SVGLetter from "../../../assets/images/letter.svg";
 import TextFade from "@/app/component/textfade";
+import GradualSpacing from "@/app/component/gradualspace";
 
 const Introduction = () => {
   const [ifStart, setStart] = useState(false);
@@ -27,18 +28,22 @@ const Introduction = () => {
             </div>
           </div>
 
-          <TextFade
-            direction="down"
-            className="flex flex-col items-center md:items-start space-y-8"
-          >
-            <div className="flex justify-center md:justify-start w-full">
+          <div className="flex flex-col items-center md:items-start space-y-4">
+            <TextFade
+              direction="down"
+              duration={5}
+              delay={5}
+              className="flex justify-center md:justify-start w-full"
+            >
               <SVGLetter className="w-4/5 max-w-md transform-gpu hover:scale-105 transition-transform" />
-            </div>
+            </TextFade>
 
             <div className="flex flex-col items-center md:items-start gap-6 text-black">
-              <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight">
-                Build for music <span className="text-[#ff0000]">Lover</span>
+              <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight">
+                <GradualSpacing text="Build for music" />
+                <span className="text-[#ff0000]"><GradualSpacing text="Lover" delay={2}/></span>
               </h1>
+
               <p className="text-lg md:text-xl text-gray-700 font-medium">
                 Search for music that suits your taste
               </p>
@@ -57,7 +62,7 @@ const Introduction = () => {
                 </a>
               </p>
             </div>
-          </TextFade>
+          </div>
         </div>
       </div>
     </div>
