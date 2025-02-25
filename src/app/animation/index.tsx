@@ -1,8 +1,7 @@
 import { jsx as _jsx, jsxs as _jsxs } from "react/jsx-runtime";
-import { Children } from "react";
-import { useEffect } from "react";
 import { addPropertyControls, ControlType, RenderTarget } from "framer";
 import { motion, useMotionValue, useTransform } from "framer-motion";
+import { useMemo } from "react";
 
 /**
  * ANIMATOR
@@ -102,7 +101,7 @@ const Animator = (props) => {
     /* If on a web page */
     if (!isCanvas && svgChild) {
       /* Pass Attributes */
-      // 修改获取 path 的方式，获取所有 path 元素
+      // 濞ｅ浂鍠楅弫濂告嚔瀹勬澘绲� path 闁汇劌瀚弻鐔奉嚕韫囥儳绀夐柤鎯у槻瑜板洭骞嶉埀顒勫嫉閿燂拷 path 闁稿繐鍟扮粈锟�
       const paths = svgChild.match(/<path[^>]*>/g) || [];
       const pathsData = paths.map((path) => {
         const attributes = path.match(/[\w-]+="[^"]*"/g) || [];
@@ -143,6 +142,15 @@ const Animator = (props) => {
         svgViewbox = "0 0 681 130";
       }
 
+      const processPathData = (pathsData) => {
+        return pathsData.map((pathData, index) => ({
+          pathD: pathData.pathD,
+          index: index,
+        }));
+      };
+
+      const processedPathData = useMemo(() => processPathData(pathsData),[pathsData])
+
       customShape = (
         <motion.div
           initial={isCanvas || animate === false ? false : "start"}
@@ -168,7 +176,7 @@ const Animator = (props) => {
               fill="#ff0000"
               stroke="#ff0000"
             >
-              {pathsData.map((pathData, index) => (
+              {processedPathData.map((pathData, index) => (
                 <motion.path
                   key={index}
                   {...shapeProps}
@@ -293,23 +301,23 @@ addPropertyControls(Animator, {
 
 /* Method to get stringless attributes */
 const splitAndReplace = (string) => {
-  // 在此打印解析内容，用于调试
+  // 闁革负鍔嶉婵嬪箥閹惧啿绁悷娆欑稻閻庝粙宕橀崨顓у晣闁挎稑鐬奸弫銈嗙鎼淬倗娈堕悹鍥锋嫹
   console.log("[splitAndReplace] raw:", string);
   const value = string.split("=")[1].replace(/['"]+/g, "");
 
-  // 若解析结果不是数值，则照原样返回；否则返回数值
+  // 闁兼眹鍎磋闁哄鍔楃划銊╁几濠娾偓缁楀寮伴娑欐闁稿﹦銆嬬槐婵嬪礆濞嗘垵寮鹃柛妯煎枑閻楄鲸娼婚弬鎸庣闁挎稒绋戦幆渚€宕氬▎鎺旂闁搞儳鍋為弳鐔煎磹閿燂拷
   const num = parseFloat(value);
   if (isNaN(num)) {
     console.warn("[splitAndReplace] Not a number:", value);
-    return value; // 直接返回字符串
+    return value; // 闁烩晛鐡ㄧ敮瀛樻交閺傛寧绀€閻庢稒顨堥浣圭▔閿燂拷
   }
-  return num; // 返回数值
+  return num; // 閺夆晜鏌ㄥú鏍极閺夊簱鍋撻敓锟�
 };
 
 /* Method to get the first child */
 function getFirstChild(slots) {
   if (!slots || slots.length === 0) return null;
-  return slots[0]; // 直接返回第一个元素，无需使用 React.Children
+  return slots[0]; // 闁烩晛鐡ㄧ敮瀛樻交閺傛寧绀€缂佹鍏涚粩瀛樼▔椤忓嫬甯楃紒杈╁缁辨繈寮悩缁樹粯濞达綀娉曢弫锟� React.Children
 }
 
 /* Styles */
