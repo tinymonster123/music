@@ -1,0 +1,71 @@
+svg#freepik_stories-passionate:not(.animated) .animable {
+  opacity: 0;
+}
+svg#freepik_stories-passionate.animated
+  #freepik--background-complete--inject-113 {
+  animation: 1.5s Infinite linear wind;
+  animation-delay: 0s;
+}
+svg#freepik_stories-passionate.animated #freepik--speech-bubble--inject-113 {
+  animation: 1.5s Infinite linear heartbeat;
+  animation-delay: 0s;
+}
+svg#freepik_stories-passionate.animated #freepik--Character--inject-113 {
+  animation: 1.5s Infinite linear wind;
+  animation-delay: 0s;
+}
+svg#freepik_stories-passionate.animated #freepik--Device--inject-113 {
+  animation: 1.5s Infinite linear heartbeat;
+  animation-delay: 0s;
+}
+svg#freepik_stories-passionate.animated #freepik--musical-notes--inject-113 {
+  animation: 1.5s Infinite linear floating;
+  animation-delay: 0s;
+}
+@keyframes wind {
+  0% {
+    transform: rotate(0deg);
+  }
+  25% {
+    transform: rotate(1deg);
+  }
+  75% {
+    transform: rotate(-1deg);
+  }
+}
+@keyframes heartbeat {
+  0% {
+    transform: scale(1);
+  }
+  10% {
+    transform: scale(1.1);
+  }
+  30% {
+    transform: scale(1);
+  }
+  40% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+  60% {
+    transform: scale(1);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+@keyframes floating {
+  0% {
+    opacity: 1;
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0px);
+  }
+}

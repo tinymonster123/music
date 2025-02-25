@@ -67,7 +67,7 @@ const Animator = (props) => {
     /* Add our own properties to the Path */
     const pathLength = useMotionValue(0);
     const opacity = useTransform(pathLength, [0, 0.025], [0, 1]);
-    console.log("from: ", from, "to: ", to);
+    // console.log("from: ", from, "to: ", to);
 
     const shapeProps = {
       variants: {
@@ -101,7 +101,7 @@ const Animator = (props) => {
     /* If on a web page */
     if (!isCanvas && svgChild) {
       /* Pass Attributes */
-      // 濞ｅ浂鍠楅弫濂告嚔瀹勬澘绲� path 闁汇劌瀚弻鐔奉嚕韫囥儳绀夐柤鎯у槻瑜板洭骞嶉埀顒勫嫉閿燂拷 path 闁稿繐鍟扮粈锟�
+      // 婵烇絽娴傞崰妤呭极婵傚憡鍤旂€瑰嫭婢樼徊锟� path 闂佹眹鍔岀€氼參寮婚悢濂夊殨闊洢鍎崇粈澶愭煠閹冩Щ鐟滄澘娲獮宥夊焵椤掑嫬瀚夐柨鐕傛嫹 path 闂佺ǹ绻愰崯鎵矆閿燂拷
       const paths = svgChild.match(/<path[^>]*>/g) || [];
       const pathsData = paths.map((path) => {
         const attributes = path.match(/[\w-]+="[^"]*"/g) || [];
@@ -149,7 +149,10 @@ const Animator = (props) => {
         }));
       };
 
-      const processedPathData = useMemo(() => processPathData(pathsData),[pathsData])
+      const processedPathData = useMemo(
+        () => processPathData(pathsData),
+        [pathsData]
+      );
 
       customShape = (
         <motion.div
@@ -186,12 +189,24 @@ const Animator = (props) => {
                   strokeLinejoin={pathData.strokeLinejoin}
                   strokeLinecap={pathData.strokeLinecap}
                   fill="#ff0000"
-                  style={{
-                    pathLength: !endCircle ? pathLength : undefined,
-                    opacity: !endCircle ? opacity : undefined,
+                  initial={{
+                    pathLength: 0,
+                    fillOpacity: 0,
                   }}
-                  initial={isCanvas || animate === false ? false : "start"}
-                  animate={isCanvas || animate === false ? false : "end"}
+                  animate={{
+                    pathLength: 1,
+                    fillOpacity: 1,
+                  }}
+                  transition={{
+                    pathLength: {
+                      duration: 2,
+                      ease: "easeInOut",
+                    },
+                    fillOpacity: {
+                      duration: 1,
+                      delay: 1.5, // 在描边动画进行到75%时开始显示填充色
+                    },
+                  }}
                 />
               ))}
             </motion.g>
@@ -301,23 +316,23 @@ addPropertyControls(Animator, {
 
 /* Method to get stringless attributes */
 const splitAndReplace = (string) => {
-  // 闁革负鍔嶉婵嬪箥閹惧啿绁悷娆欑稻閻庝粙宕橀崨顓у晣闁挎稑鐬奸弫銈嗙鎼淬倗娈堕悹鍥锋嫹
-  console.log("[splitAndReplace] raw:", string);
+  // 闂侀潻璐熼崝宥夘敆濠靛绠ラ柟鎯у暱缁侇亪鎮峰▎娆戠ɑ闁诲簼绮欏畷姗€宕ㄩ褍鏅ｉ梺鎸庣☉閻ジ寮妶鍡欘洸閹兼番鍊楀▓鍫曟偣閸ラ攱瀚�
+  // console.log("[splitAndReplace] raw:", string);
   const value = string.split("=")[1].replace(/['"]+/g, "");
 
-  // 闁兼眹鍎磋闁哄鍔楃划銊╁几濠娾偓缁楀寮伴娑欐闁稿﹦銆嬬槐婵嬪礆濞嗘垵寮鹃柛妯煎枑閻楄鲸娼婚弬鎸庣闁挎稒绋戦幆渚€宕氬▎鎺旂闁搞儳鍋為弳鐔煎磹閿燂拷
+  // 闂佸吋鐪归崕纾嬵暰闂佸搫顑嗛崝妤冨垝閵娾晛鍑犳繝濞惧亾缂佹顦靛浼搭敍濞戞瑦顔嶉梺绋匡功閵嗗妲愬┑瀣婵炲棙鍨靛楣冩煕濡厧鏋戦柣妤勯哺濞煎寮幐搴ｎ槬闂佹寧绋掔粙鎴﹀箚娓氣偓瀹曟艾鈻庨幒鏃傤唹闂佹悶鍎抽崑鐐哄汲閻旂厧纾归柨鐕傛嫹
   const num = parseFloat(value);
   if (isNaN(num)) {
-    console.warn("[splitAndReplace] Not a number:", value);
-    return value; // 闁烩晛鐡ㄧ敮瀛樻交閺傛寧绀€閻庢稒顨堥浣圭▔閿燂拷
+    // console.warn("[splitAndReplace] Not a number:", value);
+    return value; // 闂佺儵鏅涢悺銊ф暜鐎涙ɑ浜ら柡鍌涘缁€鈧柣搴㈢⊕椤ㄥ牓顢栨担鍦枖闁跨噦鎷�
   }
-  return num; // 閺夆晜鏌ㄥú鏍极閺夊簱鍋撻敓锟�
+  return num; // 闁哄鏅滈弻銊ッ洪弽顓炴瀬闁哄绨遍崑鎾绘晸閿燂拷
 };
 
 /* Method to get the first child */
 function getFirstChild(slots) {
   if (!slots || slots.length === 0) return null;
-  return slots[0]; // 闁烩晛鐡ㄧ敮瀛樻交閺傛寧绀€缂佹鍏涚粩瀛樼▔椤忓嫬甯楃紒杈╁缁辨繈寮悩缁樹粯濞达綀娉曢弫锟� React.Children
+  return slots[0]; // 闂佺儵鏅涢悺銊ф暜鐎涙ɑ浜ら柡鍌涘缁€鈧紓浣诡殢閸忔稓绮╃€涙ḿ鈻旀い蹇撳鐢绱掓潏鈺侇€撶紒杈ㄧ箞瀵噣鎮╃紒妯圭帛婵炶揪缍€濞夋洟寮敓锟� React.Children
 }
 
 /* Styles */
