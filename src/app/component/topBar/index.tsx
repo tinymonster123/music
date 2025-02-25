@@ -1,8 +1,16 @@
+"use client"
 import Link from "next/link";
+import { useEffect, useState } from "react";
 
 const TopBar = () => {
+  const [isStart,setStart] = useState(false)
+
+  useEffect(() => {
+    setStart(true)
+  },[])
+
   return (
-    <header className="fixed top-0 left-0 right-0 bg-white backdrop-blur-sm z-50">
+    <header className={`fixed top-0 left-0 right-0 bg-white backdrop-blur-sm z-50 transition-transform delay-5000 duration-3000 ease-in-out ${isStart ? "translate-y-0" : "-translate-y-full"}`}>
       <nav className="max-w-7xl mx-auto px-4 flex items-center justify-between h-14 md:h-16">
         <Link
           href="https://github.com/tinymonster123"
