@@ -13,7 +13,7 @@ export default {
         foreground: "var(--foreground)",
       },
       backgroundColor: {
-        pink: {
+        pinky: {
           deepRed: "#ff0000",
           lightRed: "#E3170D",
           base: "#ff79b0",

@@ -1,20 +1,18 @@
-import TopBar from "@/app/component/topBar"
-import AnimatorLetter from "@/app/component/animatorletter"
-import LazyLoader from "@/app/component/lazyloader"
+﻿import TopBar from "@/app/component/topBar";
+import AnimatorLetter from "@/app/component/animatorletter";
+import LazyLoader from "@/app/component/lazyloader";
+import Introduction from "../introduction";
 
 const HomePage = () => {
-    return (
-        <>
-        <TopBar />
-        <AnimatorLetter />
-        <LazyLoader>
-            <div className="w-100% h-100%">
-                <h1>你好</h1>
-            </div>
-        </LazyLoader>
-        </>
-    )
+  return (
+    <>
+      <TopBar />
+      <AnimatorLetter />
+      <LazyLoader>
+        <Introduction />
+      </LazyLoader>
+    </>
+  );
+};
 
-}
-
-export default HomePage
+export default HomePage;
