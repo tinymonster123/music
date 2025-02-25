@@ -14,6 +14,8 @@ export default {
       },
       backgroundColor: {
         pink: {
+          deepRed: "#ff0000",
+          lightRed: "#E3170D",
           base: "#ff79b0",
           crimson: "#FF4081",
         },
