@@ -1,12 +1,9 @@
-const SVGPath = {
-  props: {
-    svg: `<?xml version="1.0" standalone="no"?>
-<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 20010904//EN"
- "http://www.w3.org/TR/2001/REC-SVG-20010904/DTD/svg10.dtd">
+import React from "react";
+
+export const svgString = `
 <svg version="1.0" xmlns="http://www.w3.org/2000/svg"
  width="681.000000pt" height="130.000000pt" viewBox="0 0 681.000000 130.000000"
  preserveAspectRatio="xMidYMid meet">
-
 <g transform="translate(0.000000,130.000000) scale(0.100000,-0.100000)"
 fill="#ff0000" stroke="#ff0000">
 <path d="M2306 1233 c-27 -87 -90 -232 -168 -388 -39 -77 -100 -203 -135 -280
@@ -65,7 +62,11 @@ c26 -99 101 -148 237 -154 146 -7 241 33 351 148 l59 62 5 -69 c7 -80 28 -117
 -68 -134 -315 -321 -393 l-38 -15 7 27 c20 81 133 265 196 318 28 24 122 75
 139 75 3 0 10 -5 17 -12z"/>
 </g>
-</svg>`,
+</svg>`;
+
+const SVGPath = {
+  props: {
+    svg: svgString,
   },
 };
 

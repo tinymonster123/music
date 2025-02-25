@@ -1,8 +1,11 @@
 "use client";
-import Animator from "@/app/animation";
+import Animator from "../../animation";
 import SVGPath from "@/app/animation/path";
+import { createElement } from "react";
 
 const AnimatorLetter = () => {
+  console.log(SVGPath);
+
   return (
     <div className="w-full h-screen flex items-center justify-center bg-white">
       <Animator
@@ -12,8 +15,9 @@ const AnimatorLetter = () => {
         slots={[SVGPath]}
         pathAnimation={{
           type: "tween",
-          duration: 2,
+          duration: 3,
         }}
+        endCircle={false}
       />
     </div>
   );

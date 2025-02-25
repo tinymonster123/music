@@ -1,5 +1,6 @@
 import { jsx as _jsx, jsxs as _jsxs } from "react/jsx-runtime";
 import { Children } from "react";
+import { useEffect } from "react";
 import { addPropertyControls, ControlType, RenderTarget } from "framer";
 import { motion, useMotionValue, useTransform } from "framer-motion";
 
@@ -17,8 +18,8 @@ const Animator = (props) => {
   /* Properties */
   const {
     pathAnimation,
-    from,
-    to,
+    from = 0,
+    to = 100,
     animate,
     shouldLoop,
     loopOptions,
@@ -27,7 +28,7 @@ const Animator = (props) => {
   } = props;
 
   /* State */
-  const hasChildren = Children.count(slots) > 0;
+  const hasChildren = slots && slots.length > 0;
 
   /* Empty State */
   let customShape = (
@@ -43,7 +44,7 @@ const Animator = (props) => {
   if (hasChildren) {
     /* Grab the SVG from the Graphic */
     const firstChild = getFirstChild(slots);
-    const svgChild = getFirstChild(firstChild.props.svg);
+    const svgChild = firstChild?.props?.svg;
     const isSpring = pathAnimation.type === "spring";
 
     /* Shape transition properties */
@@ -67,17 +68,26 @@ const Animator = (props) => {
     /* Add our own properties to the Path */
     const pathLength = useMotionValue(0);
     const opacity = useTransform(pathLength, [0, 0.025], [0, 1]);
+    console.log("from: ", from, "to: ", to);
+
     const shapeProps = {
       variants: {
         start: {
-          pathLength: from / 100,
+          pathLength: 0,
         },
         end: {
-          pathLength: to / 100,
+          pathLength: 1,
         },
       },
-      transition: shapeTransition,
+      transition: {
+        pathLength: {
+          duration: 2,
+          ease: "easeInOut",
+        },
+      },
     };
+
+    // const strokeDasharray = `${pathLength.get()}px ${1 - pathLength.get()}px`;
 
     /* Prevent animating or adjusting pathLength on the Canvas */
     const isCanvas = RenderTarget.current() === RenderTarget.canvas;
@@ -87,38 +97,51 @@ const Animator = (props) => {
       customShape = firstChild;
     }
 
+    // ...existing code...
+
     /* If on a web page */
     if (!isCanvas && svgChild) {
       /* Pass Attributes */
-      let attributes = svgChild.match(/[\w-]+="[^"]*"/g);
-      let pathD;
-      let stroke;
-      let strokeWidth;
-      let strokeLinecap;
-      let strokeLinejoin;
-      for (const element of attributes) {
-        if (element.includes("d=")) {
-          pathD = splitAndReplace(element);
+      // 修改获取 path 的方式，获取所有 path 元素
+      const paths = svgChild.match(/<path[^>]*>/g) || [];
+      const pathsData = paths.map((path) => {
+        const attributes = path.match(/[\w-]+="[^"]*"/g) || [];
+        let pathD, stroke, strokeWidth, strokeLinecap, strokeLinejoin;
+
+        for (const element of attributes) {
+          if (element.includes("d=")) {
+            pathD = splitAndReplace(element);
+          }
+          if (element.includes("stroke=")) {
+            stroke = splitAndReplace(element);
+          }
+          if (element.includes("stroke-width=")) {
+            strokeWidth = splitAndReplace(element);
+          }
+          if (element.includes("stroke-linecap=")) {
+            strokeLinecap = splitAndReplace(element);
+          }
+          if (element.includes("stroke-linejoin=")) {
+            strokeLinejoin = splitAndReplace(element);
+          }
         }
-        if (element.includes("stroke=")) {
-          stroke = splitAndReplace(element);
-        }
-        if (element.includes("stroke-width=")) {
-          strokeWidth = splitAndReplace(element);
-        }
-        if (element.includes("stroke-linecap=")) {
-          strokeLinecap = splitAndReplace(element);
-        }
-        if (element.includes("stroke-linejoin=")) {
-          strokeLinejoin = splitAndReplace(element);
-        }
-      }
+
+        return { pathD, stroke, strokeWidth, strokeLinecap, strokeLinejoin };
+      });
 
       /* Grab viewbox */
       let svgViewbox;
-      svgViewbox = svgChild.split("viewBox=")[1];
-      svgViewbox = svgViewbox.split(">")[0];
-      svgViewbox = svgViewbox.replace(/^"(.+(?="$))"$/, "$1");
+      const viewboxPart = svgChild.split("viewBox=")[1] || "";
+      if (viewboxPart) {
+        svgViewbox = viewboxPart
+          .split("preserveAspectRatio")[0]
+          .replace(/&quot;/g, "")
+          .replace(/["']/g, "")
+          .replace(/\.000000/g, "")
+          .trim();
+      } else {
+        svgViewbox = "0 0 681 130";
+      }
 
       customShape = (
         <motion.div
@@ -136,22 +159,34 @@ const Animator = (props) => {
         >
           <motion.svg
             xmlns="http://www.w3.org/2000/svg"
-            width="100%"
-            height="100%"
+            width="681.0000pt"
+            height="131.000pt"
             viewBox={svgViewbox}
           >
-            <motion.path
-              {...shapeProps}
-              d={pathD}
-              stroke={stroke}
-              strokeWidth={strokeWidth}
-              strokeLinejoin={strokeLinejoin}
-              strokeLinecap={strokeLinecap}
-              fill="transparent"
-              style={!endCircle && { pathLength, opacity }}
-              initial={isCanvas || animate === false ? false : "start"}
-              animate={isCanvas || animate === false ? false : "end"}
-            />
+            <motion.g
+              transform="translate(0.000000,130.000000) scale(0.100000,-0.100000)"
+              fill="#ff0000"
+              stroke="#ff0000"
+            >
+              {pathsData.map((pathData, index) => (
+                <motion.path
+                  key={index}
+                  {...shapeProps}
+                  d={pathData.pathD}
+                  stroke="#ff0000"
+                  strokeWidth={pathData.strokeWidth}
+                  strokeLinejoin={pathData.strokeLinejoin}
+                  strokeLinecap={pathData.strokeLinecap}
+                  fill="#ff0000"
+                  style={{
+                    pathLength: !endCircle ? pathLength : undefined,
+                    opacity: !endCircle ? opacity : undefined,
+                  }}
+                  initial={isCanvas || animate === false ? false : "start"}
+                  animate={isCanvas || animate === false ? false : "end"}
+                />
+              ))}
+            </motion.g>
           </motion.svg>
         </motion.div>
       );
@@ -258,18 +293,23 @@ addPropertyControls(Animator, {
 
 /* Method to get stringless attributes */
 const splitAndReplace = (string) => {
-  return string.split("=")[1].replace(/['"]+/g, "");
+  // 在此打印解析内容，用于调试
+  console.log("[splitAndReplace] raw:", string);
+  const value = string.split("=")[1].replace(/['"]+/g, "");
+
+  // 若解析结果不是数值，则照原样返回；否则返回数值
+  const num = parseFloat(value);
+  if (isNaN(num)) {
+    console.warn("[splitAndReplace] Not a number:", value);
+    return value; // 直接返回字符串
+  }
+  return num; // 返回数值
 };
 
 /* Method to get the first child */
 function getFirstChild(slots) {
-  let firstChild;
-  Children.map(slots, (child) => {
-    if (firstChild === undefined) {
-      firstChild = child;
-    }
-  });
-  return firstChild;
+  if (!slots || slots.length === 0) return null;
+  return slots[0]; // 直接返回第一个元素，无需使用 React.Children
 }
 
 /* Styles */
