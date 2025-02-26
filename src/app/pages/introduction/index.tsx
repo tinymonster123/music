@@ -48,12 +48,12 @@ const Introduction = () => {
                 </span>
               </h1>
 
-              <p className="text-lg md:text-xl text-gray-700 font-medium">
+              <div className="text-lg md:text-xl text-gray-700 font-medium">
                 <TypingEffect
                   delay={3}
                   text=" Search for music that suits your taste"
                 />
-              </p>
+              </div>
               <BlurIn delay={5.5}>
                 <button className="mt-4 px-8 py-3 bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-full font-medium hover:shadow-lg transform hover:-translate-y-0.5 transition-all">
                   Get Started

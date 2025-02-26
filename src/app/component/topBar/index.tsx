@@ -5,9 +5,9 @@ import TextFade from "../textfade";
 
 const TopBar = () => {
   return (
-    <TextFade direction="down" delay={5} duration={5}>
+    <TextFade direction="down" delay={5} >
       <header
-        className={`fixed top-0 left-0 right-0 bg-white backdrop-blur-sm z-50 transition-transform delay-5000 duration-3000 ease-in-out `}
+        className={`fixed top-0 left-0 right-0 bg-white backdrop-blur-sm z-50 `}
       >
         <nav className="max-w-7xl mx-auto px-4 flex items-center justify-between h-14 md:h-16">
           <Link
