@@ -26,7 +26,7 @@ const TopBar = () => {
         </Link>
         <div className="flex items-center gap-6">
           <Link
-            href="/signup"
+            href="/pages/signup"
             className="hover:text-pinky-deepRed transition-colors text-black"
           >
             Sign Up

@@ -5,12 +5,12 @@ export interface EmailRef {
 }
 
 export interface PasswordRef {
-  passwordRef?: React.RefObject<HTMLLabelElement | null>;
+  passwordRef?: React.RefObject<HTMLInputElement | null>;
 }
 
 export interface Refs extends EmailRef, PasswordRef {
   setEmailRef: (ref: React.RefObject<HTMLInputElement | null>) => void;
-  setPasswordRef: (ref: React.RefObject<HTMLLabelElement | null>) => void;
+  setPasswordRef: (ref: React.RefObject<HTMLInputElement | null>) => void;
 }
 
 export interface CustomRef
@@ -23,7 +23,7 @@ const useEmailAndPasswordStore = create<Refs>((set) => ({
   passwordRef: { current: null },
   setEmailRef: (ref: React.RefObject<HTMLInputElement | null>) =>
     set({ emailRef: ref }),
-  setPasswordRef: (ref: React.RefObject<HTMLLabelElement | null>) =>
+  setPasswordRef: (ref: React.RefObject<HTMLInputElement | null>) =>
     set({ passwordRef: ref }),
 }));
 
