@@ -3,14 +3,14 @@ import Animator from "../../animation";
 import SVGPath from "@/app/animation/path";
 
 const AnimatorLetter = () => {
-  console.log(SVGPath);
+  // console.log(SVGPath);
 
   return (
     <div className="w-full h-screen flex items-center justify-center bg-white transform-gpu">
       <Animator
         pathAnimation={{
           type: "tween",
-          duration: 5, // 持续时间可以根据需要调整
+          duration: 5, // 鎸佺画鏃堕棿鍙互鏍规嵁闇€瑕佽皟鏁�
           ease: "easeInOut",
         }}
         from={0}
