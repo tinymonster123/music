@@ -1,5 +1,6 @@
 "use client";
 import { useEffect, useState } from "react";
+import Link from "next/link";
 import SvgIcon from "@/app/component/passionate";
 import SVGLetter from "../../../assets/images/letter.svg";
 import TextFade from "@/app/component/textfade";
@@ -55,9 +56,11 @@ const Introduction = () => {
                 />
               </div>
               <BlurIn delay={5.5}>
-                <button className="mt-4 px-8 py-3 bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-full font-medium hover:shadow-lg transform hover:-translate-y-0.5 transition-all">
-                  Get Started
-                </button>
+                <Link href="/pages/showpage">
+                  <button className="mt-4 px-8 py-3 bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-full font-medium hover:shadow-lg transform hover:-translate-y-0.5 transition-all">
+                    Get Started
+                  </button>
+                </Link>
               </BlurIn>
               <TextFade
                 direction="up"
