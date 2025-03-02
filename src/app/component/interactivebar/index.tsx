@@ -1,6 +1,7 @@
 "use client";
 import * as React from "react";
 import { Bar, BarChart, CartesianGrid, XAxis } from "recharts";
+import 
 
 import {
   Card,
@@ -23,7 +24,7 @@ const chartData = [
   { date: "2024-04-03", desktop: 167 },
   { date: "2024-04-04", desktop: 242 },
   { date: "2024-04-05", desktop: 373 },
-  // ... 保留其他日期的 desktop 数据，移除 mobile 数据
+  // ... 保留其他日期�? desktop 数据，移�? mobile 数据
   { date: "2024-06-30", desktop: 446 },
 ];
 
@@ -38,7 +39,7 @@ const chartConfig = {
 } satisfies ChartConfig;
 
 const InteractiveBar = () => {
-  // 不再需要切换状态
+  // 不再需要切换状�?
   const total = React.useMemo(
     () => chartData.reduce((acc, curr) => acc + curr.desktop, 0),
     []
