@@ -6,15 +6,15 @@ export interface AlbumMessage {
 }
 
 export interface AlbumState {
-  album: AlbumMessage;
-  setAlbum: (album: AlbumMessage) => void;
+  album: AlbumMessage[];
+  setAlbum: (album: AlbumMessage[]) => void;
 }
 
 const useAlbumStore = create<AlbumState>((set) => ({
-    album:{
+    album:[{
         album_id:0,
         album_date_created:"",
-    },
+    },],
     setAlbum:(album) => set({album})
 }))
 
