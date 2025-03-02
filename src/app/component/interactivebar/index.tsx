@@ -1,7 +1,8 @@
 "use client";
 import * as React from "react";
 import { Bar, BarChart, CartesianGrid, XAxis } from "recharts";
-import 
+import AlbumDateDisplay from "@/app/request/albumdatedisplay";
+import useAlbumStore from "@/app/hooks/albumdate";
 
 import {
   Card,
@@ -18,46 +19,39 @@ import {
   ChartTooltipContent,
 } from "@/components/ui/chart";
 
-const chartData = [
-  { date: "2024-04-01", desktop: 222 },
-  { date: "2024-04-02", desktop: 97 },
-  { date: "2024-04-03", desktop: 167 },
-  { date: "2024-04-04", desktop: 242 },
-  { date: "2024-04-05", desktop: 373 },
-  // ... 保留其他日期�? desktop 数据，移�? mobile 数据
-  { date: "2024-06-30", desktop: 446 },
-];
-
 const chartConfig = {
   views: {
-    label: "Page Views",
+    label: "Album Views",
   },
-  desktop: {
-    label: "Desktop",
+  album_id: {
+    label: "Album ID",
     color: "hsl(var(--chart-1))",
   },
 } satisfies ChartConfig;
 
 const InteractiveBar = () => {
-  // 不再需要切换状�?
+  // 将钩子调用移到组件内部
+  const { album } = useAlbumStore();
+  
+  // 计算总数
   const total = React.useMemo(
-    () => chartData.reduce((acc, curr) => acc + curr.desktop, 0),
-    []
+    () => album.reduce((acc, curr) => acc + curr.album_id, 0),
+    [album]
   );
 
   return (
     <Card>
       <CardHeader className="flex flex-col items-stretch space-y-0 border-b p-0 sm:flex-row">
         <div className="flex flex-1 flex-col justify-center gap-1 px-6 py-5 sm:py-6">
-          <CardTitle>Desktop Users Chart</CardTitle>
+          <CardTitle>Album Data Chart</CardTitle>
           <CardDescription>
-            Showing desktop visitors for the last 3 months
+            Showing album creation dates
           </CardDescription>
         </div>
         <div className="flex">
           <div className="relative z-30 flex flex-1 flex-col justify-center gap-1 border-t px-6 py-4 text-left sm:border-l sm:border-t-0 sm:px-8 sm:py-6">
             <span className="text-xs text-muted-foreground">
-              {chartConfig.desktop.label}
+              {chartConfig.album_id.label}
             </span>
             <span className="text-lg font-bold leading-none sm:text-3xl">
               {total.toLocaleString()}
@@ -72,7 +66,7 @@ const InteractiveBar = () => {
         >
           <BarChart
             accessibilityLayer
-            data={chartData}
+            data={album}
             margin={{
               left: 12,
               right: 12,
@@ -80,17 +74,15 @@ const InteractiveBar = () => {
           >
             <CartesianGrid vertical={false} />
             <XAxis
-              dataKey="date"
+              dataKey="album_date_created"
               tickLine={false}
               axisLine={false}
               tickMargin={8}
               minTickGap={32}
               tickFormatter={(value) => {
-                const date = new Date(value);
-                return date.toLocaleDateString("en-US", {
-                  month: "short",
-                  day: "numeric",
-                });
+                // 假设 value 已经是 YYYY-MM-DD 格式
+                const [year, month, day] = value.split("-");
+                return `${month}/${day}`;
               }}
             />
             <ChartTooltip
@@ -99,16 +91,14 @@ const InteractiveBar = () => {
                   className="w-[150px]"
                   nameKey="views"
                   labelFormatter={(value) => {
-                    return new Date(value).toLocaleDateString("en-US", {
-                      month: "short",
-                      day: "numeric",
-                      year: "numeric",
-                    });
+                    // 假设 value 已经是 YYYY-MM-DD 格式
+                    const [year, month, day] = value.split("-");
+                    return `${month}/${day}/${year}`;
                   }}
                 />
               }
             />
-            <Bar dataKey="desktop" fill="var(--color-desktop)" />
+            <Bar dataKey="album_id" fill="var(--color-desktop)" />
           </BarChart>
         </ChartContainer>
       </CardContent>

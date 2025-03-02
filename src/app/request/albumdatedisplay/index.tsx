@@ -6,32 +6,41 @@ import { AlbumMessage } from "../../hooks/albumdate";
 const AlbumDateDisplay = () => {
   const { setAlbum } = useAlbumStore();
 
-  const getAlbum = async () => {
-    try {
-      const response = await axios.get("/api/dataStatics");
-      if (response.status === 200 && response.data.success) {
-        const data = response.data.data;
-        const dataMessages: AlbumMessage[] = [];
-        data.forEach((item: AlbumMessage) => {
-          let album_date_created = item.album_date_created.split("")[0];
-          let [day, month, year] = album_date_created.split("/");
-          album_date_created = `${year}-${month}-${day}`;
+  useEffect(() => {
+    const getAlbum = async () => {
+      try {
+        const response = await axios.get("/api/dataStatics");
+        if (response.status === 200 && response.data.success) {
+          const data = response.data.data;
+          const dataMessages: AlbumMessage[] = [];
+          data.forEach((item: AlbumMessage) => {
+            console.log(item.album_date_created);
+            let album_date_created = item.album_date_created.split(" ")[0];
+            console.log(album_date_created);
+            let [day, month, year] = album_date_created.split("/");
+            // console.log(album_date_created.split("/"));
+            album_date_created = `${year}-${month}-${day}`;
 
-          let newAlbum = {
-            album_id: item.album_id,
-            album_date_created: album_date_created,
-          };
+            let newAlbum = {
+              album_id: item.album_id,
+              album_date_created: album_date_created,
+            };
 
-          dataMessages.push(newAlbum);
-          console.log(newAlbum);
-        });
+            dataMessages.push(newAlbum);
+            // console.log(newAlbum);
+          });
 
-        setAlbum(dataMessages);
+          setAlbum(dataMessages);
+        }
+      } catch (error) {
+        console.error(error);
       }
-    } catch (error) {
-      console.error(error);
-    }
-  };
+    };
+
+    getAlbum();
+  }, [setAlbum]);
+
+  return null;
 };
 
 export default AlbumDateDisplay;
