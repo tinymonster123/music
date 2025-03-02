@@ -1,8 +1,7 @@
 import { Client } from "ssh2";
-import mysql from "mysql2";
+import mysql from "mysql2/promise";
 import dotenv from "dotenv";
 import fs from "fs";
-
 
 dotenv.config();
 
@@ -12,12 +11,17 @@ const sshConfig = {
   privateKey: fs.readFileSync(process.env.SSH_KEY_PATH || ""),
 };
 
-const dbConfig = {
-  host: process.env.DB_HOST,
-  user: process.env.DB_USER,
-  password: process.env.DB_PASSWORD,
-  database: process.env.DB_NAME,
-};
+if (process.env.NODE_ENV === 'development') {
+  console.log("Database config:", {
+    host: process.env.DB_HOST,
+    port: process.env.DB_PORT,
+    user: process.env.DB_USER,
+    password: process.env.DB_PASSWORD ? '***' : 'not set',
+    database: process.env.DB_NAME,
+  });
+}
+
+
 
 const forwardPort = 3306;
 
@@ -37,10 +41,15 @@ const connectDBSSH = async () => {
             }
 
             try {
-              const connection = mysql.createConnection({
-                ...dbConfig,
+              const connection = await mysql.createConnection({
+                host: process.env.DB_HOST,
+                user: process.env.DB_USER,
+                password: process.env.DB_PASSWORD,
+                database: process.env.DB_NAME,
                 stream: stream,
               });
+
+              (await connection).ping()
 
               resolve({ connection, conn });
             } catch (dbError) {
@@ -55,4 +64,4 @@ const connectDBSSH = async () => {
   });
 };
 
-export default connectDBSSH
+export default connectDBSSH;
