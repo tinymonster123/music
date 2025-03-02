@@ -38,28 +38,24 @@ const InteractiveBar = () => {
   // 灏嗛挬瀛愯皟鐢ㄧЩ鍒扮粍浠跺唴閮�
   const { album } = useAlbumStore();
   const { albumDateArray, total } = React.useMemo(() => {
+    if (!album || album.length === 0) {
+      return { albumDateArray: [], total: 0 };
+    }
+
     const albumMap = new Map<string, number>();
 
-    // 统计每个日期的专辑数量
-    album.forEach((item) => {
-      if (albumMap.has(item.album_date_created)) {
-        albumMap.set(
-          item.album_date_created,
-          (albumMap.get(item.album_date_created) || 0) + 1
-        );
-      } else {
-        albumMap.set(item.album_date_created, 1);
-      }
-    });
+    // 使用 reduce 替代 forEach 提高性能
+    album.reduce((map, item) => {
+      const count = map.get(item.album_date_created) || 0;
+      map.set(item.album_date_created, count + 1);
+      return map;
+    }, albumMap);
 
-    // 将统计结果转换为数组
-    const dateCountArray: AlbumDateCount[] = [];
-    albumMap.forEach((count, date) => {
-      dateCountArray.push({
-        date,
-        count,
-      });
-    });
+    // 优化数组转换
+    const dateCountArray = Array.from(albumMap, ([date, count]) => ({
+      date,
+      count,
+    }));
 
     // 计算总数
     const totalAlbums = dateCountArray.reduce(
@@ -83,7 +79,7 @@ const InteractiveBar = () => {
         <div className="flex">
           <div className="relative z-30 flex flex-1 flex-col justify-center gap-1 border-t px-6 py-4 text-left sm:border-l sm:border-t-0 sm:px-8 sm:py-6">
             <span className="text-xs text-muted-foreground">
-              {chartConfig.count.label} 
+              {chartConfig.count.label}
             </span>
             <span className="text-lg font-bold leading-none sm:text-3xl">
               {total.toLocaleString()}
@@ -112,7 +108,6 @@ const InteractiveBar = () => {
               tickMargin={8}
               minTickGap={32}
               tickFormatter={(value) => {
-                // 假设 value 已经是 YYYY-MM-DD 格式
                 const [year, month, day] = value.split("-");
                 return `${month}/${day}`;
               }}

@@ -62,7 +62,7 @@ const Introduction = () => {
                   </button>
                 </Link>
               </BlurIn>
-              <TextFade
+              {/* <TextFade
                 direction="up"
                 delay={5}
                 duration={2}
@@ -77,7 +77,7 @@ const Introduction = () => {
                 >
                   MusicBrainz Database
                 </a>
-              </TextFade>
+              </TextFade> */}
             </div>
           </div>
         </div>

@@ -7,27 +7,38 @@ const AlbumDateDisplay = () => {
   const { setAlbum } = useAlbumStore();
 
   useEffect(() => {
+    const loadPriority = window.requestIdleCallback || setTimeout;
+
     const getAlbum = async () => {
       try {
         const response = await axios.get("/api/dataStatics");
-        if (response.status === 200 && response.data.success) {
-          const data = response.data.data;
+        const cacheKey = "album_date_cache";
+        let data;
+
+        const cacheData = sessionStorage.getItem(cacheKey);
+        if (cacheData) {
+          data = JSON.parse(cacheData);
+          console.log(data);
+          
+        } else {
+          if (response.status === 200 && response.data.success) {
+            data = response.data.data;
+            sessionStorage.setItem(cacheKey, JSON.stringify(data));
+          }
+        }
+
+        if (data) {
           const dataMessages: AlbumMessage[] = [];
           data.forEach((item: AlbumMessage) => {
-            console.log(item.album_date_created);
             let album_date_created = item.album_date_created.split(" ")[0];
-            console.log(album_date_created);
             let [day, month, year] = album_date_created.split("/");
-            // console.log(album_date_created.split("/"));
             album_date_created = `${year}-${month}-${day}`;
-
             let newAlbum = {
               album_id: item.album_id,
               album_date_created: album_date_created,
             };
 
             dataMessages.push(newAlbum);
-            // console.log(newAlbum);
           });
 
           setAlbum(dataMessages);
@@ -37,7 +48,9 @@ const AlbumDateDisplay = () => {
       }
     };
 
-    getAlbum();
+    loadPriority(() => {
+      getAlbum();
+    });
   }, [setAlbum]);
 
   return null;
