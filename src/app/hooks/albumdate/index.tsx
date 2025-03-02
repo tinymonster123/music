@@ -1,7 +1,7 @@
 import { create } from "zustand";
 
 export interface AlbumMessage {
-  album_id: Number;
+  album_id: number;
   album_date_created: string;
 }
 
