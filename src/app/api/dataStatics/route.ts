@@ -13,7 +13,8 @@ const GET = async () => {
     const [rows] = await connection.query(`
             SELECT album_id, album_date_created  
             FROM raw_albums  
-            ORDER BY album_id;  
+            ORDER BY album_id
+            LIMIT 1112;  
         `);
 
     await connection.end();
