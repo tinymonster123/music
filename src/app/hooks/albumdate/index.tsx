@@ -1,32 +1,21 @@
 import { create } from "zustand";
 
-export interface EmailRef {
-  emailRef?: React.RefObject<HTMLInputElement | null>;
+export interface AlbumMessage {
+  album_id: Number;
+  album_date_created: string;
 }
 
-export interface PasswordRef {
-  passwordRef?: React.RefObject<HTMLInputElement | null>;
+export interface AlbumState {
+  album: AlbumMessage;
+  setAlbum: (album: AlbumMessage) => void;
 }
 
-export interface Refs extends EmailRef, PasswordRef {
-  setEmailRef: (ref: React.RefObject<HTMLInputElement | null>) => void;
-  setPasswordRef: (ref: React.RefObject<HTMLInputElement | null>) => void;
-}
-
-export interface CustomRef
-  extends React.ComponentPropsWithoutRef<"form">,
-    EmailRef,
-    PasswordRef {}
-
-const useEmailAndPasswordStore = create<Refs>((set) => ({
-  emailRef: { current: null },
-  passwordRef: { current: null },
-  setEmailRef: (ref: React.RefObject<HTMLInputElement | null>) =>
-    set({ emailRef: ref }),
-  setPasswordRef: (ref: React.RefObject<HTMLInputElement | null>) =>
-    set({ passwordRef: ref }),
-}));
-
-const useAlbumDateStore = create((set) => ({
-    
+const useAlbumStore = create<AlbumState>((set) => ({
+    album:{
+        album_id:0,
+        album_date_created:"",
+    },
+    setAlbum:(album) => set({album})
 }))
+
+export default useAlbumStore
