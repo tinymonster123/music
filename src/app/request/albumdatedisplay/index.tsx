@@ -2,30 +2,39 @@ import { useEffect } from "react";
 import useAlbumStore from "../../hooks/albumdate";
 import axios from "axios";
 import { AlbumMessage } from "../../hooks/albumdate";
+import { resolve } from "path";
 
 const AlbumDateDisplay = () => {
   const { setAlbum } = useAlbumStore();
 
   useEffect(() => {
-    const loadPriority = window.requestIdleCallback || setTimeout;
+    // const loadPriority = window.requestIdleCallback || setTimeout;
 
     const getAlbum = async () => {
       try {
-        const response = await axios.get("/api/dataStatics");
         const cacheKey = "album_date_cache";
         let data;
 
-        const cacheData = sessionStorage.getItem(cacheKey);
-        if (cacheData) {
-          data = JSON.parse(cacheData);
-          console.log(data);
-          
-        } else {
-          if (response.status === 200 && response.data.success) {
-            data = response.data.data;
-            sessionStorage.setItem(cacheKey, JSON.stringify(data));
-          }
-        }
+        const [dataFromCache, response] = await Promise.all([
+          new Promise((resolve) => {
+            const cacheData = sessionStorage.getItem(cacheKey);
+            if (cacheData) {
+              try {
+                resolve(JSON.parse(cacheData));
+              } catch (error) {
+                console.error(error);
+                resolve(null);
+              }
+            } else {
+              resolve(null);
+            }
+          }),
+          axios.get("/api/dataStatics"),
+        ]);
+        data =
+          dataFromCache || (response.status === 200 && response.data.success)
+            ? response.data.data
+            : null;
 
         if (data) {
           const dataMessages: AlbumMessage[] = [];
@@ -48,9 +57,11 @@ const AlbumDateDisplay = () => {
       }
     };
 
-    loadPriority(() => {
-      getAlbum();
-    });
+    getAlbum();
+
+    // loadPriority(() => {
+    //   getAlbum();
+    // });
   }, [setAlbum]);
 
   return null;
