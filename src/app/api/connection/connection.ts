@@ -11,21 +11,28 @@ const sshConfig = {
   privateKey: fs.readFileSync(process.env.SSH_KEY_PATH || ""),
 };
 
-// if (process.env.NODE_ENV === 'development') {
-//   console.log("Database config:", {
-//     host: process.env.DB_HOST,
-//     port: process.env.DB_PORT,
-//     user: process.env.DB_USER,
-//     password: process.env.DB_PASSWORD ? '***' : 'not set',
-//     database: process.env.DB_NAME,
-//   });
-// }
-
-
+const dbConfig = {
+  host: process.env.DB_HOST,
+  user: process.env.DB_USER,
+  password: process.env.DB_PASSWORD,
+  database: process.env.DB_NAME,
+  queueLimit: 0,
+  waitForConnections: true,
+  connectionLimit: 10,
+  enableKeepAlive: true,
+  // keepAliveINitialDelay: 10000,
+};
 
 const forwardPort = 3306;
 
+let pool: mysql.Pool | null = null;
+let sshClient: Client | null = null;
+
 const connectDBSSH = async () => {
+  if (pool) {
+    return { connection: pool, conn: sshClient };
+  }
+
   return new Promise((resolve, reject) => {
     const conn = new Client();
     conn
@@ -41,17 +48,16 @@ const connectDBSSH = async () => {
             }
 
             try {
-              const connection = await mysql.createConnection({
-                host: process.env.DB_HOST,
-                user: process.env.DB_USER,
-                password: process.env.DB_PASSWORD,
-                database: process.env.DB_NAME,
+              const pool = await mysql.createPool({
+                ...dbConfig,
                 stream: stream,
               });
 
-              (await connection).ping()
+              // (await pool).ping();
 
-              resolve({ connection, conn });
+              sshClient = conn;
+
+              resolve({ connection: pool, conn });
             } catch (dbError) {
               conn.end();
               reject(dbError);
