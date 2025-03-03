@@ -1,6 +1,10 @@
 import type { NextConfig } from "next";
+import type { Configuration as WebpackConfig } from "webpack";
+import transpileModules from "next-transpile-modules";
 
-const nextConfig: NextConfig = {
+const withTM = transpileModules(["ssh2"]);
+
+const nextConfig: NextConfig = withTM({
   experimental: {
     turbo: {
       rules: {
@@ -14,26 +18,82 @@ const nextConfig: NextConfig = {
           loaders: ["@svgr/webpack"],
           as: "*.js",
         },
+        "\\.css$": {
+          loaders: ["style-loader", "css-loader", "postcss-loader"],
+        },
       },
     },
   },
   /* config options here */
-  webpack(config) {
-    config.module.rules.push({
-      test: /\.svg$/,
-      use: [
-        {
-          loader: "@svgr/webpack",
-          options: {
-            svgo: false,
-          },
+  // webpack(config) {
+  //   config.module.rules.push({
+  //     test: /\.svg$/,
+  //     use: [
+  //       {
+  //         loader: "@svgr/webpack",
+  //         options: {
+  //           svgo: false,
+  //         },
+  //       },
+  //     ],
+  //   });
+
+  //   return config;
+  // },
+  webpack(config: WebpackConfig, { isServer }: { isServer: boolean }) {
+    // ΩˆøÕªß∂À≈‰÷√
+    if (!isServer) {
+      // ≈‰÷√ Node.js ƒ£øÈºÊ»›
+      const { resolve = {} } = config;
+      config.resolve = {
+        ...resolve,
+        fallback: {
+          ...resolve.fallback,
+          fs: false,
+          net: false,
+          tls: false,
+          crypto: false,
         },
-      ],
-    });
+      };
+
+      // ≈‰÷√ SVG ¥¶¿Ì
+      const { module = { rules: [] } } = config;
+      const rules = Array.isArray(module.rules) ? module.rules : [];
+
+      config.module = {
+        ...module,
+        rules: [
+          ...rules,
+          {
+            test: /\.svg$/,
+            use: [
+              {
+                loader: "@svgr/webpack",
+                options: { svgo: false },
+              },
+            ],
+          },
+          {
+            test: /\.css$/,
+            use: [
+              "style-loader",
+              "css-loader",
+              {
+                loader: "postcss-loader",
+                options: {
+                  postcssOptions: {
+                    plugins: ["tailwindcss", "autoprefixer"],
+                  },
+                },
+              },
+            ],
+          },
+        ],
+      };
+    }
 
     return config;
   },
-  // optimizeFonts:true,
-};
+});
 
 export default nextConfig;
