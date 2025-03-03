@@ -24,7 +24,13 @@ const GET = async () => {
         success: true,
         data: rows,
       },
-      { status: 200 }
+      {
+        status: 200,
+        headers: {
+          "Cache-Control":
+            "max-age=3600, s-maxage=3600, stale-while-revalidate=86400",
+        },
+      }
     );
   } catch (error) {
     console.error(error);
