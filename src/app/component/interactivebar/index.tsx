@@ -26,17 +26,17 @@ export interface AlbumDateCount {
 
 const chartConfig = {
   views: {
-    label: "Albums Per Day", // 閺囧瓨鏌婇弽鍥╊劮
+    label: "Albums Per Day", // 闁哄洤鐡ㄩ弻濠囧冀閸モ晩鍔�
   },
   count: {
-    // 閺€閫涜礋 "count"
+    // 闁衡偓闁稖绀� "count"
     label: "Number of Albums",
     color: "hsl(var(--chart-1))",
   },
 } satisfies ChartConfig;
 
 const InteractiveBar = () => {
-  // 閻忓繐妫濋幐顒傗偓娑欏姌閻ㄧ喖鎮介妸顬晠宕氶幍顔剧煁濞寸姾娉涢崬鎾焾閿燂拷
+  // 闁诲繐绻愬Λ婵嬪箰椤掑倵鍋撳☉娆忓闁汇劎鍠栭幃浠嬪Ω椤喒鏅犲畷姘跺箥椤斿墽鐓佹繛瀵稿Ь濞夋盯宕幘顔界劸闁跨噦鎷�
   const { album } = useAlbumStore();
   const [total, setTotalAlbums] = React.useState(0);
   const { albumDateArray, dateCountArray } = React.useMemo(() => {
@@ -46,14 +46,14 @@ const InteractiveBar = () => {
 
     const albumMap = new Map<string, number>();
 
-    // 娴ｈ法鏁� reduce 閺囧じ鍞� forEach 閹绘劙鐝幀褑鍏�
+    // 濞达綀娉曢弫锟� reduce 闁哄洤銇橀崬锟� forEach 闁圭粯鍔欓悵顕€骞€瑜戦崗锟�
     album.reduce((map, item) => {
       const count = map.get(item.album_date_created) || 0;
       map.set(item.album_date_created, count + 1);
       return map;
     }, albumMap);
 
-    // 娴兼ê瀵查弫鎵矋鏉烆剚宕�
+    // 濞村吋锚鐎垫煡寮幍顔剧煁閺夌儐鍓氬畷锟�
     const dateCountArray = Array.from(albumMap, ([date, count]) => ({
       date,
       count,
@@ -113,7 +113,7 @@ const InteractiveBar = () => {
           >
             <CartesianGrid vertical={false} />
             <XAxis
-              dataKey="date" // 閺€閫涜礋 "date"
+              dataKey="date" // 闁衡偓闁稖绀� "date"
               tickLine={false}
               axisLine={false}
               tickMargin={8}
@@ -129,7 +129,7 @@ const InteractiveBar = () => {
                   className="w-[150px]"
                   nameKey="count"
                   labelFormatter={(value) => {
-                    // 闁稿娲╅锟� value 鐎规瓕灏欑划锟犲及閿燂拷 YYYY-MM-DD 闁哄秶鍘х槐锟�
+                    // 闂佺ǹ顑呭ú鈺咁敊閿燂拷 value 閻庤鐡曠亸娆戝垝閿熺姴鍙婇柨鐕傛嫹 YYYY-MM-DD 闂佸搫绉堕崢褏妲愰敓锟�
                     const [year, month, day] = value.split("-");
                     return `${month}/${day}/${year}`;
                   }}

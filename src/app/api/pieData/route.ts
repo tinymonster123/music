@@ -11,12 +11,12 @@ const GET = async () => {
     const { connection, conn } = (await connectDBSSH()) as DatabaseConnection;
 
     const [rows] = await connection.query(`
-            SELECT album_id, album_date_created  
+            SELECT album_listens, album_title  
             FROM raw_albums  
-            ORDER BY album_id;
+            ORDER BY album_listens;
         `);
 
-    
+    console.log(rows);
 
     await connection.end();
     conn.end();
