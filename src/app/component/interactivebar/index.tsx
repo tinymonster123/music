@@ -17,25 +17,26 @@ import {
   ChartTooltip,
   ChartTooltipContent,
 } from "@/components/ui/chart";
+import findTop10Element from "@/app/utils/prioritysort";
 
-interface AlbumDateCount {
+export interface AlbumDateCount {
   date: string;
   count: number;
 }
 
 const chartConfig = {
   views: {
-    label: "Albums Per Day", // 更新标签
+    label: "Albums Per Day", // 閺囧瓨鏌婇弽鍥╊劮
   },
   count: {
-    // 改为 "count"
+    // 閺€閫涜礋 "count"
     label: "Number of Albums",
     color: "hsl(var(--chart-1))",
   },
 } satisfies ChartConfig;
 
 const InteractiveBar = () => {
-  // 灏嗛挬瀛愯皟鐢ㄧЩ鍒扮粍浠跺唴閮�
+  // 閻忓繐妫濋幐顒傗偓娑欏姌閻ㄧ喖鎮介妸顬晠宕氶幍顔剧煁濞寸姾娉涢崬鎾焾閿燂拷
   const { album } = useAlbumStore();
   const { albumDateArray, total } = React.useMemo(() => {
     if (!album || album.length === 0) {
@@ -44,27 +45,31 @@ const InteractiveBar = () => {
 
     const albumMap = new Map<string, number>();
 
-    // 使用 reduce 替代 forEach 提高性能
+    // 娴ｈ法鏁� reduce 閺囧じ鍞� forEach 閹绘劙鐝幀褑鍏�
     album.reduce((map, item) => {
       const count = map.get(item.album_date_created) || 0;
       map.set(item.album_date_created, count + 1);
       return map;
     }, albumMap);
 
-    // 优化数组转换
+    // 娴兼ê瀵查弫鎵矋鏉烆剚宕�
     const dateCountArray = Array.from(albumMap, ([date, count]) => ({
       date,
       count,
     }));
 
-    // 计算总数
-    const totalAlbums = dateCountArray.reduce(
-      (acc, curr) => acc + curr.count,
-      0
-    );
+    const top10CountArray = findTop10Element(albumMap);
+
+    let totalAlbums = 0;
+
+    const loadPriority = window.requestIdleCallback || setTimeout;
+    // 鐠侊紕鐣婚幀缁樻殶
+    loadPriority(() => {
+      totalAlbums = dateCountArray.reduce((acc, curr) => acc + curr.count, 0);
+    });
 
     return {
-      albumDateArray: dateCountArray,
+      albumDateArray: top10CountArray,
       total: totalAlbums,
     };
   }, [album]);
@@ -74,7 +79,9 @@ const InteractiveBar = () => {
       <CardHeader className="flex flex-col items-stretch space-y-0 border-b p-0 sm:flex-row">
         <div className="flex flex-1 flex-col justify-center gap-1 px-6 py-5 sm:py-6">
           <CardTitle>Album Data Chart</CardTitle>
-          <CardDescription>Showing album creation dates</CardDescription>
+          <CardDescription>
+            Showing top 10 number of album creation dates
+          </CardDescription>
         </div>
         <div className="flex">
           <div className="relative z-30 flex flex-1 flex-col justify-center gap-1 border-t px-6 py-4 text-left sm:border-l sm:border-t-0 sm:px-8 sm:py-6">
@@ -102,7 +109,7 @@ const InteractiveBar = () => {
           >
             <CartesianGrid vertical={false} />
             <XAxis
-              dataKey="date" // 改为 "date"
+              dataKey="date" // 閺€閫涜礋 "date"
               tickLine={false}
               axisLine={false}
               tickMargin={8}
@@ -118,7 +125,7 @@ const InteractiveBar = () => {
                   className="w-[150px]"
                   nameKey="count"
                   labelFormatter={(value) => {
-                    // 鍋囪 value 宸茬粡鏄� YYYY-MM-DD 鏍煎紡
+                    // 闁稿娲╅锟� value 鐎规瓕灏欑划锟犲及閿燂拷 YYYY-MM-DD 闁哄秶鍘х槐锟�
                     const [year, month, day] = value.split("-");
                     return `${month}/${day}/${year}`;
                   }}
