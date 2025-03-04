@@ -21,13 +21,7 @@ import {
 import useListenStore, { PieData } from "@/app/hooks/listensdata";
 
 // 定义图表颜色数组
-const CHART_COLORS = [
-  "hsl(var(--chart-1))",
-  "hsl(var(--chart-2))",
-  "hsl(var(--chart-3))",
-  "hsl(var(--chart-4))",
-  "hsl(var(--chart-5))",
-];
+const CHART_COLORS = ["#8d0000", "#dd0025", "#FF3D3D", "#f35d74", "#ffc3d4"];
 
 // 动态生成图表配置
 const generateChartConfig = (data: PieData[]) => {
@@ -94,12 +88,7 @@ const PieBar = () => {
           className="mx-auto aspect-square max-h-[250px]"
         >
           <PieChart>
-            <ChartTooltip
-              cursor={false}
-              content={
-                <ChartTooltipContent />
-              }
-            />
+            <ChartTooltip cursor={false} content={<ChartTooltipContent />} />
             <Pie
               data={processedListenData}
               dataKey="listens"
