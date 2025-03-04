@@ -24,24 +24,24 @@ import useListenStore, { PieData } from "@/app/hooks/listensdata";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Badge } from "@/components/ui/badge";
 
-// 修改为与InteractiveBar完全一致的颜色系统
+// 淇敼涓轰笌InteractiveBar瀹屽叏涓€鑷寸殑棰滆壊绯荤粺
 const colorConfig = {
-  baseColor: "#dd0025", // 主色调，与InteractiveBar一致
-  gradientFrom: "#dd0025",
-  gradientTo: "#ff704d",
-  hoverColor: "#b3001e", // 悬停色
+  baseColor: "#ff0000", // 主色调，纯红色
+  gradientFrom: "#ff0000",
+  gradientTo: "#ff6666", // 较浅的红色
+  hoverColor: "#cc0000", // 深红色，悬停色
 };
 
 // 定义饼图的扇形颜色数组，以主色调为中心扩展
 const CHART_COLORS = [
-  colorConfig.baseColor, // 主色调
-  "#b3001e", // 暗色调
-  "#ff3d3d", // 亮色调
-  "#ff704d", // 渐变结束色
-  "#8d0000", // 深色调
+  colorConfig.baseColor, // 主色调 - 纯红色
+  "#cc0000", // 深红色
+  "#ff3333", // 亮红色
+  "#ff6666", // 浅红色
+  "#990000", // 暗红色
 ];
 
-// 动态生成图表配置
+// 鍔ㄦ€佺敓鎴愬浘琛ㄩ厤缃�
 const generateChartConfig = (data: PieData[]) => {
   const config: Record<string, any> = {
     listens: {
@@ -50,7 +50,7 @@ const generateChartConfig = (data: PieData[]) => {
     },
   };
 
-  // 取前5个数据项设置颜色
+  // 鍙栧墠5涓暟鎹」璁剧疆棰滆壊
   data.slice(0, 5).forEach((item, index) => {
     const shortTitle =
       item.title.length > 15 ? `${item.title.substring(0, 15)}...` : item.title;
@@ -69,7 +69,7 @@ const PieBar = () => {
   const [loading, setLoading] = React.useState(true);
   const [activeIndex, setActiveIndex] = React.useState<number | null>(null);
 
-  // 处理数据：取前5个收听量最大的专辑
+  // 澶勭悊鏁版嵁锛氬彇鍓�5涓敹鍚噺鏈€澶х殑涓撹緫
   const processedListenData = React.useMemo(() => {
     if (!listendata || listendata.length === 0) {
       return [];
@@ -77,13 +77,13 @@ const PieBar = () => {
 
     setLoading(false);
 
-    // 复制数组，排序，并取前5个
+    // 澶嶅埗鏁扮粍锛屾帓搴忥紝骞跺彇鍓�5涓�
     return [...listendata]
-      .filter((item) => item.listens > 0) // 过滤掉收听量为0的
-      .sort((a, b) => b.listens - a.listens) // 按收听量降序
-      .slice(0, 5) // 取前5个
+      .filter((item) => item.listens > 0) // 杩囨护鎺夋敹鍚噺涓�0鐨�
+      .sort((a, b) => b.listens - a.listens) // 鎸夋敹鍚噺闄嶅簭
+      .slice(0, 5) // 鍙栧墠5涓�
       .map((item, index) => {
-        // 为每个项生成渐变ID
+        // 涓烘瘡涓」鐢熸垚娓愬彉ID
         const gradientId = `pieGradient-${index}`;
         return {
           ...item,
@@ -93,23 +93,23 @@ const PieBar = () => {
       });
   }, [listendata]);
 
-  // 计算总收听量
+  // 璁＄畻鎬绘敹鍚噺
   const totalListens = React.useMemo(() => {
     return processedListenData.reduce((acc, curr) => acc + curr.listens, 0);
   }, [processedListenData]);
 
-  // 动态生成图表配置
+  // 鍔ㄦ€佺敓鎴愬浘琛ㄩ厤缃�
   const chartConfig = React.useMemo(
     () => generateChartConfig(processedListenData),
     [processedListenData]
   );
 
-  // 计算百分比
+  // 璁＄畻鐧惧垎姣�
   const getPercentage = (count: number) => {
     return totalListens > 0 ? Math.round((count / totalListens) * 100) : 0;
   };
 
-  // 自定义tooltip内容
+  // 鑷畾涔塼ooltip鍐呭
   const CustomTooltip = ({ active, payload }: any) => {
     if (active && payload && payload.length) {
       const data = payload[0].payload;
@@ -144,7 +144,7 @@ const PieBar = () => {
     setActiveIndex(null);
   };
 
-  // 为饼图定义渐变
+  // 更新渐变定义
   const renderGradients = () => {
     return processedListenData.map((entry, index) => (
       <linearGradient
@@ -224,6 +224,7 @@ const PieBar = () => {
                   stroke="#ffffff"
                 >
                   {processedListenData.map((entry, index) => (
+                    // 更新Cell样式
                     <Cell
                       key={`cell-${index}`}
                       fill={
@@ -235,7 +236,7 @@ const PieBar = () => {
                       style={{
                         filter:
                           activeIndex === index
-                            ? "drop-shadow(0 4px 6px rgba(221, 0, 37, 0.3))"
+                            ? "drop-shadow(0 4px 6px rgba(255, 0, 0, 0.3))"
                             : "none",
                         transition: "all 0.3s ease",
                       }}
@@ -246,7 +247,7 @@ const PieBar = () => {
                       if (viewBox && "cx" in viewBox && "cy" in viewBox) {
                         return (
                           <g>
-                            {/* 添加浅色背景圆形 */}
+                            {/* 娣诲姞娴呰壊鑳屾櫙鍦嗗舰 */}
                             <circle
                               cx={viewBox.cx}
                               cy={viewBox.cy}
