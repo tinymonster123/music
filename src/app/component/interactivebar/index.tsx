@@ -36,21 +36,21 @@ export interface AlbumDateCount {
   count: number;
 }
 
-// 更加丰富的色彩配置
+// 鏇村姞涓板瘜鐨勮壊褰╅厤缃�
 const chartConfig = {
   views: {
     label: "Albums Per Day",
   },
   count: {
     label: "Number of Albums",
-    color: "#dd0025", // 主色调
+    color: "#dd0025", // 涓昏壊璋�
   },
 } satisfies ChartConfig;
 
 const colorConfig = {
   gradientFrom: "#dd0025",
-  gradientTo: "#ff704d", // 渐变结束色
-  hoverColor: "#b3001e", // 悬停色
+  gradientTo: "#ff704d", // 娓愬彉缁撴潫鑹�
+  hoverColor: "#b3001e", // 鎮仠鑹�
 };
 
 const InteractiveBar = () => {
@@ -97,12 +97,12 @@ const InteractiveBar = () => {
     });
   }, [dateCountArray]);
 
-  // 计算百分比
+  // 璁＄畻鐧惧垎姣�
   const getPercentage = (count: number) => {
     return total > 0 ? Math.round((count / total) * 100) : 0;
   };
 
-  // 自定义tooltip内容
+  // 鑷畾涔塼ooltip鍐呭
   const CustomTooltip = ({ active, payload, label }: any) => {
     if (active && payload && payload.length) {
       const data = payload[0].payload;
@@ -130,13 +130,13 @@ const InteractiveBar = () => {
     return null;
   };
 
-  // 格式化日期显示
+  // 鏍煎紡鍖栨棩鏈熸樉绀�
   const formatDate = (value: string) => {
     const [year, month, day] = value.split("-");
     return `${month}/${day}`;
   };
 
-  // 自定义渐变条形图
+  // 鑷畾涔夋笎鍙樻潯褰㈠浘
   const renderCustomBar = (props: any) => {
     const { x, y, width, height, index } = props;
     const isHovered = index === hoverIndex;
@@ -190,7 +190,7 @@ const InteractiveBar = () => {
   };
 
   return (
-    <Card className="overflow-hidden rounded-xl shadow-md hover:shadow-lg transition-shadow duration-300">
+    <Card className="overflow-hidden shadow-md hover:shadow-lg transition-shadow duration-300">
       <CardHeader className="flex flex-col items-stretch space-y-0 border-b p-0 bg-gray-50 dark:bg-gray-900 sm:flex-row">
         <div className="flex flex-1 flex-col justify-center gap-1 px-6 py-5 sm:py-6">
           <div className="flex items-center gap-2">

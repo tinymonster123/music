@@ -24,24 +24,24 @@ import useListenStore, { PieData } from "@/app/hooks/listensdata";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Badge } from "@/components/ui/badge";
 
-// 淇敼涓轰笌InteractiveBar瀹屽叏涓€鑷寸殑棰滆壊绯荤粺
+// 娣囶喗鏁兼稉杞扮瑢InteractiveBar鐎瑰苯鍙忔稉鈧懛瀵告畱妫版粏澹婄化鑽ょ埠
 const colorConfig = {
-  baseColor: "#ff0000", // 主色调，纯红色
+  baseColor: "#ff0000", // 涓昏壊璋冿紝绾孩鑹�
   gradientFrom: "#ff0000",
-  gradientTo: "#ff6666", // 较浅的红色
-  hoverColor: "#cc0000", // 深红色，悬停色
+  gradientTo: "#ff6666", // 杈冩祬鐨勭孩鑹�
+  hoverColor: "#cc0000", // 娣辩孩鑹诧紝鎮仠鑹�
 };
 
-// 定义饼图的扇形颜色数组，以主色调为中心扩展
+// 瀹氫箟楗煎浘鐨勬墖褰㈤鑹叉暟缁勶紝浠ヤ富鑹茶皟涓轰腑蹇冩墿灞�
 const CHART_COLORS = [
-  colorConfig.baseColor, // 主色调 - 纯红色
-  "#cc0000", // 深红色
-  "#ff3333", // 亮红色
-  "#ff6666", // 浅红色
-  "#990000", // 暗红色
+  colorConfig.baseColor, // 涓昏壊璋� - 绾孩鑹�
+  "#cc0000", // 娣辩孩鑹�
+  "#ff3333", // 浜孩鑹�
+  "#ff6666", // 娴呯孩鑹�
+  "#990000", // 鏆楃孩鑹�
 ];
 
-// 鍔ㄦ€佺敓鎴愬浘琛ㄩ厤缃�
+// 閸斻劍鈧胶鏁撻幋鎰禈鐞涖劑鍘ょ純锟�
 const generateChartConfig = (data: PieData[]) => {
   const config: Record<string, any> = {
     listens: {
@@ -50,7 +50,7 @@ const generateChartConfig = (data: PieData[]) => {
     },
   };
 
-  // 鍙栧墠5涓暟鎹」璁剧疆棰滆壊
+  // 閸欐牕澧�5娑擃亝鏆熼幑顕€銆嶇拋鍓х枂妫版粏澹�
   data.slice(0, 5).forEach((item, index) => {
     const shortTitle =
       item.title.length > 15 ? `${item.title.substring(0, 15)}...` : item.title;
@@ -69,7 +69,7 @@ const PieBar = () => {
   const [loading, setLoading] = React.useState(true);
   const [activeIndex, setActiveIndex] = React.useState<number | null>(null);
 
-  // 澶勭悊鏁版嵁锛氬彇鍓�5涓敹鍚噺鏈€澶х殑涓撹緫
+  // 婢跺嫮鎮婇弫鐗堝祦閿涙艾褰囬崜锟�5娑擃亝鏁归崥顒勫櫤閺堚偓婢堆呮畱娑撴捁绶�
   const processedListenData = React.useMemo(() => {
     if (!listendata || listendata.length === 0) {
       return [];
@@ -77,13 +77,13 @@ const PieBar = () => {
 
     setLoading(false);
 
-    // 澶嶅埗鏁扮粍锛屾帓搴忥紝骞跺彇鍓�5涓�
+    // 婢跺秴鍩楅弫鎵矋閿涘本甯撴惔蹇ョ礉楠炶泛褰囬崜锟�5娑擄拷
     return [...listendata]
-      .filter((item) => item.listens > 0) // 杩囨护鎺夋敹鍚噺涓�0鐨�
-      .sort((a, b) => b.listens - a.listens) // 鎸夋敹鍚噺闄嶅簭
-      .slice(0, 5) // 鍙栧墠5涓�
+      .filter((item) => item.listens > 0) // 鏉╁洦鎶ら幒澶嬫暪閸氼剟鍣烘稉锟�0閻拷
+      .sort((a, b) => b.listens - a.listens) // 閹稿鏁归崥顒勫櫤闂勫秴绨�
+      .slice(0, 5) // 閸欐牕澧�5娑擄拷
       .map((item, index) => {
-        // 涓烘瘡涓」鐢熸垚娓愬彉ID
+        // 娑撶儤鐦℃稉顏堛€嶉悽鐔稿灇濞撴劕褰塈D
         const gradientId = `pieGradient-${index}`;
         return {
           ...item,
@@ -93,30 +93,30 @@ const PieBar = () => {
       });
   }, [listendata]);
 
-  // 璁＄畻鎬绘敹鍚噺
+  // 鐠侊紕鐣婚幀缁樻暪閸氼剟鍣�
   const totalListens = React.useMemo(() => {
     return processedListenData.reduce((acc, curr) => acc + curr.listens, 0);
   }, [processedListenData]);
 
-  // 鍔ㄦ€佺敓鎴愬浘琛ㄩ厤缃�
+  // 閸斻劍鈧胶鏁撻幋鎰禈鐞涖劑鍘ょ純锟�
   const chartConfig = React.useMemo(
     () => generateChartConfig(processedListenData),
     [processedListenData]
   );
 
-  // 璁＄畻鐧惧垎姣�
+  // 鐠侊紕鐣婚惂鎯у瀻濮ｏ拷
   const getPercentage = (count: number) => {
     return totalListens > 0 ? Math.round((count / totalListens) * 100) : 0;
   };
 
-  // 鑷畾涔塼ooltip鍐呭
+  // 閼奉亜鐣炬稊濉紀oltip閸愬懎顔�
   const CustomTooltip = ({ active, payload }: any) => {
     if (active && payload && payload.length) {
       const data = payload[0].payload;
       const percentage = Math.round((data.listens / totalListens) * 100);
 
       return (
-        <div className="bg-white dark:bg-gray-800 p-3 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700">
+        <div className="bg-white dark:bg-gray-800 p-3  shadow-lg border border-gray-200 dark:border-gray-700">
           <div className="text-sm font-semibold mb-1 truncate max-w-[200px]">
             {data.title}
           </div>
@@ -144,7 +144,7 @@ const PieBar = () => {
     setActiveIndex(null);
   };
 
-  // 更新渐变定义
+  // 鏇存柊娓愬彉瀹氫箟
   const renderGradients = () => {
     return processedListenData.map((entry, index) => (
       <linearGradient
@@ -174,7 +174,7 @@ const PieBar = () => {
   };
 
   return (
-    <Card className="overflow-hidden rounded-xl shadow-md hover:shadow-lg transition-shadow duration-300">
+    <Card className="overflow-hidden  shadow-md hover:shadow-lg transition-shadow duration-300">
       <CardHeader className="flex flex-col items-stretch space-y-0 border-b p-0 bg-gray-50 dark:bg-gray-900 sm:flex-row">
         <div className="flex flex-1 flex-col justify-center gap-1 px-6 py-5 sm:py-6">
           <div className="flex items-center gap-2">
@@ -224,7 +224,7 @@ const PieBar = () => {
                   stroke="#ffffff"
                 >
                   {processedListenData.map((entry, index) => (
-                    // 更新Cell样式
+                    // 鏇存柊Cell鏍峰紡
                     <Cell
                       key={`cell-${index}`}
                       fill={
@@ -247,7 +247,7 @@ const PieBar = () => {
                       if (viewBox && "cx" in viewBox && "cy" in viewBox) {
                         return (
                           <g>
-                            {/* 娣诲姞娴呰壊鑳屾櫙鍦嗗舰 */}
+                            {/* 濞ｈ濮炲ù鍛板閼冲本娅欓崷鍡楄埌 */}
                             <circle
                               cx={viewBox.cx}
                               cy={viewBox.cy}
