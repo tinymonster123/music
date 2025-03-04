@@ -4,6 +4,7 @@ import SkeletonCard from "../skeleton";
 import dynamic from "next/dynamic";
 import { Suspense } from "react";
 import PieChartData from "@/app/request/piechartdata";
+import LazyLoader from "@/app/component/lazyloader";
 
 const InteractiveBar = dynamic(() => import("@/app/component/interactivebar"), {
   loading: () => <SkeletonCard />,
@@ -23,9 +24,11 @@ const ShowPage = () => {
         <InteractiveBar />
       </Suspense>
       <PieChartData />
-      <Suspense fallback={<SkeletonCard />}>
-        <PieBar />
-      </Suspense>
+      <LazyLoader>
+        <Suspense fallback={<SkeletonCard />}>
+          <PieBar />
+        </Suspense>
+      </LazyLoader>
     </>
   );
 };
