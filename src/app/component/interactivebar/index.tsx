@@ -38,9 +38,10 @@ const chartConfig = {
 const InteractiveBar = () => {
   // 閻忓繐妫濋幐顒傗偓娑欏姌閻ㄧ喖鎮介妸顬晠宕氶幍顔剧煁濞寸姾娉涢崬鎾焾閿燂拷
   const { album } = useAlbumStore();
-  const { albumDateArray, total } = React.useMemo(() => {
+  const [total, setTotalAlbums] = React.useState(0);
+  const { albumDateArray, dateCountArray } = React.useMemo(() => {
     if (!album || album.length === 0) {
-      return { albumDateArray: [], total: 0 };
+      return { albumDateArray: [], dateCountArray: [] };
     }
 
     const albumMap = new Map<string, number>();
@@ -62,17 +63,20 @@ const InteractiveBar = () => {
 
     let totalAlbums = 0;
 
-    const loadPriority = window.requestIdleCallback || setTimeout;
-    // 鐠侊紕鐣婚幀缁樻殶
-    loadPriority(() => {
-      totalAlbums = dateCountArray.reduce((acc, curr) => acc + curr.count, 0);
-    });
-
-    return {
-      albumDateArray: top10CountArray,
-      total: totalAlbums,
-    };
+    return { albumDateArray: top10CountArray, dateCountArray: dateCountArray };
   }, [album]);
+
+  React.useEffect(() => {
+    const loadPriority = window.requestIdleCallback || setTimeout;
+
+    loadPriority(() => {
+      const totalAlbums = dateCountArray.reduce(
+        (acc, curr) => acc + curr.count,
+        0
+      );
+      setTotalAlbums(totalAlbums);
+    });
+  }, [dateCountArray]);
 
   return (
     <Card>
