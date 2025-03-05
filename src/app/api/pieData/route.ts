@@ -16,7 +16,7 @@ const GET = async () => {
             ORDER BY album_listens;
         `);
 
-    console.log(rows);
+    // console.log(rows);
 
     await connection.end();
     conn.end();
