@@ -16,6 +16,7 @@ const StaticLetter = () => {
 
 const HomePage = () => {
   const [showAnimation, setShowAnimation] = useState(false);
+  // const [showFramerMotion, setShowFramerMotion] = useState(false);
   const key = "hasBeenWatched";
 
   const hasBeenWatchedAnimation = sessionStorage.getItem(key);
@@ -23,6 +24,7 @@ const HomePage = () => {
   useEffect(() => {
     if (!hasBeenWatchedAnimation) {
       setShowAnimation(true);
+      // setShowFramerMotion(true);
       sessionStorage.setItem(key, "true");
     }
   }, []);
@@ -30,6 +32,10 @@ const HomePage = () => {
   const handleAnimationComplete = () => {
     setShowAnimation(false);
   };
+
+  // const handleFramerMotion = () => {
+  //   setShowFramerMotion(false);
+  // };
 
   return (
     <>
