@@ -2,14 +2,11 @@ import { useEffect } from "react";
 import useAlbumStore from "../../hooks/albumdate";
 import axios from "axios";
 import { AlbumMessage } from "../../hooks/albumdate";
-import { resolve } from "path";
 
 const AlbumDateDisplay = () => {
   const { setAlbum } = useAlbumStore();
 
   useEffect(() => {
-    // const loadPriority = window.requestIdleCallback || setTimeout;
-
     const getAlbum = async () => {
       try {
         const cacheKey = "album_date_cache";
@@ -58,10 +55,6 @@ const AlbumDateDisplay = () => {
     };
 
     getAlbum();
-
-    // loadPriority(() => {
-    //   getAlbum();
-    // });
   }, [setAlbum]);
 
   return null;
