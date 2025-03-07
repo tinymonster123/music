@@ -1,16 +1,10 @@
 "use client";
 import { ArrowLeft } from "lucide-react";
 import SignUpForm from "@/components/signup-form";
-// import useEmailAndPasswordStore from "@/app/hooks/emailandpassword";
-// import { useEffect } from "react";
+
 
 const SignUpPage = () => {
-  // const {emailRef,passwordRef,setEmailRef,setPasswordRef} = useEmailAndPasswordStore()
-
-  // useEffect(() => {
-
-  // },[emailRef,passwordRef,setEmailRef,setPasswordRef])
-
+  
   return (
     <div className="grid min-h-svh ">
       <div className="flex flex-col gap-4 p-6 md:p-10">
