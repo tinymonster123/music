@@ -7,9 +7,9 @@ const GET = async () => {
     const { connection, conn } = (await connectDBSSH()) as DatabaseConnection;
 
     const [rows] = await connection.query(`
-            SELECT album_listens, album_title  
+            SELECT album_date_created, album_id 
             FROM raw_albums  
-            ORDER BY album_listens;
+            ORDER BY album_id;
         `);
 
     return NextResponse.json(
