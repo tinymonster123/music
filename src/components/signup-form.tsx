@@ -6,9 +6,7 @@ import { Label } from "@/components/ui/label";
 import { CustomRef } from "@/app/hooks/emailandpassword";
 import useEmailAndPasswordStore from "@/app/hooks/emailandpassword";
 import { useEffect, useRef, useState } from "react";
-import dotenv from "dotenv";
 
-dotenv.config();
 const authorizeURL = `${process.env.NEXT_PUBLIC_AUTHORIZE_URL}?client_id=${process.env.NEXT_PUBLIC_CLIENT_ID}&scope=user:email&state=melomane&prompt=consent`;
 
 const SignUpForm: React.FC<CustomRef> = ({
