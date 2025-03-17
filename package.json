@@ -11,6 +11,7 @@
     "test:watch": "jest --watch"
   },
   "dependencies": {
+    "@auth/pg-adapter": "^1.8.0",
     "@radix-ui/react-label": "^2.1.2",
     "@radix-ui/react-slot": "^1.1.2",
     "@svgr/webpack": "^8.1.0",
@@ -25,6 +26,7 @@
     "mysql2": "^3.12.0",
     "next": "15.1.7",
     "next-auth": "^5.0.0-beta.25",
+    "pg": "^8.14.0",
     "postcss-loader": "^8.1.1",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
@@ -49,6 +51,7 @@
     "@types/babel__preset-env": "^7",
     "@types/jest": "^29.5.14",
     "@types/node": "^20",
+    "@types/pg": "^8",
     "@types/react": "^19.0.10",
     "@types/react-dom": "^19.0.4",
     "@types/ssh2": "^1",
