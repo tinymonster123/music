@@ -1,11 +1,16 @@
 import NextAuth from "next-auth";
-import { PrismaAdapter } from "@auth/prisma-adapter";
-import { prisma } from "./prisma";
+import PostgresAdapter from "@auth/pg-adapter";
+import { Pool } from "pg";
+import { getPgPool } from "@/app/api/connection/connectpsql";
 import GitHub from "next-auth/providers/github";
 import type { NextAuthConfig } from "next-auth";
 
+let pgPromise: any;
+
+pgPromise = getPgPool(pgPromise);
+
 export const config = {
-  adapter: PrismaAdapter(prisma),
+  adapter: PostgresAdapter(pgPromise),
   providers: [
     GitHub({
       clientId: process.env.AUTH_GITHUB_ID,
