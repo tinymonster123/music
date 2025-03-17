@@ -38,7 +38,7 @@ const connectDBSSH = async () => {
       .on("ready", () => {
         conn.forwardOut(
           "127.0.0.1",
-          0,
+          33306,
           "127.0.0.1",
           forwardPort,
           async (error, stream) => {
