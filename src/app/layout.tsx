@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import initPrisma from "@/lib/initPrisma";
 import localFont from "next/font/local";
 import React from "react";
 import "./globals.css";
@@ -21,8 +20,6 @@ const helveticaRounded = localFont({
   variable: "--font-helveticaRounded",
   display: "swap",
 });
-
-initPrisma().catch(console.error);
 
 export const metadata: Metadata = {
   title: "Create Next App",
