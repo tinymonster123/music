@@ -1,10 +1,12 @@
 "use client";
 import TopBar from "@/app/component/topBar";
+import SessionTopBar from "@/app/component/sessionTopBar";
 import AnimatorLetter from "@/app/component/animatorletter";
 import Letter from "../../../assets/images/letter.svg";
 import LazyLoader from "@/app/component/lazyloader";
 import Introduction from "../introduction";
 import { useEffect, useState } from "react";
+import { useSession, SessionProvider } from "next-auth/react";
 
 const StaticLetter = () => {
   return (
@@ -14,18 +16,37 @@ const StaticLetter = () => {
   );
 };
 
+const AuthTopBar = () => {
+  const { data: session, status } = useSession();
+  const isAuthenticated = status === "authenticated";
+
+  return isAuthenticated ? <SessionTopBar /> : <TopBar />;
+};
+
+const SessionLayout = () => {
+  return (
+    <SessionProvider>
+      <AuthTopBar />
+    </SessionProvider>
+  );
+};
+
 const HomePage = () => {
   const [showAnimation, setShowAnimation] = useState(false);
   const key = "hasBeenWatched";
 
-  const hasBeenWatchedAnimation = sessionStorage.getItem(key);
+  // 处理动画逻辑
+  const hasBeenWatchedAnimation =
+    typeof window !== "undefined" ? sessionStorage.getItem(key) : null;
 
   useEffect(() => {
     if (!hasBeenWatchedAnimation) {
       setShowAnimation(true);
-      sessionStorage.setItem(key, "true");
+      if (typeof window !== "undefined") {
+        sessionStorage.setItem(key, "true");
+      }
     }
-  }, []);
+  }, [hasBeenWatchedAnimation]);
 
   const handleAnimationComplete = () => {
     setShowAnimation(false);
@@ -33,7 +54,7 @@ const HomePage = () => {
 
   return (
     <>
-      <TopBar />
+      <SessionLayout />
       {showAnimation ? (
         <AnimatorLetter handleAnimationComplete={handleAnimationComplete} />
       ) : (
