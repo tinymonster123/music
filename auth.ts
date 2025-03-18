@@ -16,7 +16,13 @@ import { isValid } from "zod";
 // }
 
 export const { handlers, auth, signIn, signOut } = NextAuth(() => {
-  const pool = new Pool({ connectionString: process.env.DATABASE_URL });
+  const pool = new Pool({
+    connectionString: process.env.DATABASE_URL,
+    ssl:
+      process.env.NODE_ENV === "production"
+        ? { rejectUnauthorized: false }
+        : undefined,
+  });
   return {
     adapter: PostgresAdapter(pool),
     providers: [
