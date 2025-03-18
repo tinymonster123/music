@@ -23,7 +23,7 @@ const AuthTopBar = () => {
   return isAuthenticated ? <SessionTopBar /> : <TopBar />;
 };
 
-const SessionLayout = () => {
+export const SessionLayout = () => {
   return (
     <SessionProvider>
       <AuthTopBar />

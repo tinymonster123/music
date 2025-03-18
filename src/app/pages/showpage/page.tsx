@@ -5,7 +5,7 @@ import dynamic from "next/dynamic";
 import { Suspense } from "react";
 import PieChartData from "@/app/request/piechartdata";
 import LazyLoader from "@/app/component/lazyloader";
-import TopBar from "@/app/component/topBar";
+import { SessionLayout } from "../homepage";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 
@@ -55,7 +55,7 @@ const PieBar = dynamic(() => import("@/app/component/piebar"), {
 const ShowPage = () => {
   return (
     <>
-      <TopBar />
+      <SessionLayout />
       <SearchInput />
       <AlbumDateDisplay />
       <Suspense fallback={<SkeletonCard />}>
