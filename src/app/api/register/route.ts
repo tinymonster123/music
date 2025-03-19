@@ -12,7 +12,7 @@ const pool = new Pool({
       : undefined,
 });
 
-export async function POST(req: NextRequest): Promise<NextResponse> {
+const POST = async (req: NextRequest): Promise<NextResponse> => {
   try {
     // 解析请求体
     const body = await req.json();
@@ -74,4 +74,6 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
       { status: 500 }
     );
   }
-}
+};
+
+export { POST };
