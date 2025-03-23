@@ -3,10 +3,11 @@ import { auth } from "../../../../auth";
 import axios from "axios";
 import { DatabaseConnection } from "../pieData/route";
 
-const POST = async (req: NextRequest) => {
+export async function POST(req: NextRequest) {
   try {
     const session = await auth();
     if (!session)
+      
       return NextResponse.json(
         {
           success: false,
@@ -25,9 +26,9 @@ const POST = async (req: NextRequest) => {
       );
     }
 
-    const { query } = await req.json();
+    const { question } = await req.json();
 
-    if (!query || typeof query !== "string")
+    if (!question || typeof question !== "string")
       return NextResponse.json(
         {
           success: false,
@@ -42,7 +43,7 @@ const POST = async (req: NextRequest) => {
       const response = await axios.post(
         `${process.env.TEXT2SQL_URL}/api/text2sql`,
         {
-          question: JSON.stringify(query),
+          question: question,
         },
         {
           headers: {
@@ -107,4 +108,4 @@ const POST = async (req: NextRequest) => {
       { status: 500 }
     );
   }
-};
+}
