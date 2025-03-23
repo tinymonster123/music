@@ -33,7 +33,7 @@ const POST = async (req: NextRequest) => {
           success: false,
           error: "请求参数无效",
         },
-        { status: 402 }
+        { status: 400 }
       );
 
     const accessToken = session.accessToken;
@@ -81,10 +81,13 @@ const POST = async (req: NextRequest) => {
         }
       } catch (error: any) {
         console.error(error);
-        return NextResponse.json({
-          ...data,
-          dbError: error.message,
-        });
+        return NextResponse.json(
+          {
+            ...data,
+            dbError: error.message,
+          },
+          { status: 200 }
+        );
       }
 
       return NextResponse.json(data);
