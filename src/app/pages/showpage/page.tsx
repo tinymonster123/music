@@ -7,6 +7,7 @@ import PieChartData from "@/app/request/piechartdata";
 import LazyLoader from "@/app/component/lazyloader";
 import { SessionLayout } from "../homepage";
 import SearchInput from "@/app/component/searchInput";
+import { SessionProvider } from "next-auth/react";
 
 const InteractiveBar = dynamic(() => import("@/app/component/interactivebar"), {
   loading: () => <SkeletonCard />,
@@ -18,11 +19,18 @@ const PieBar = dynamic(() => import("@/app/component/piebar"), {
   ssr: false,
 });
 
+const SessionSearchInput = () => {
+  return (
+    <SessionProvider>
+      <SearchInput />
+    </SessionProvider>
+  );
+};
 const ShowPage = () => {
   return (
     <>
       <SessionLayout />
-      <SearchInput />
+      <SessionSearchInput />
       <AlbumDateDisplay />
       <Suspense fallback={<SkeletonCard />}>
         <InteractiveBar />
