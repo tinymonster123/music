@@ -5,17 +5,21 @@ import GitHub from "next-auth/providers/github";
 import bcrypt from "bcryptjs";
 import { loginSchema } from "@/lib/validation";
 import { Pool } from "pg";
-import { isValid } from "zod";
 
-// declare module "next-auth" {
-//   interface Session extends DefaultSession {
-//     user: {
-//       id: string;
-//     } & DefaultSession["user"];
-//   }
+// 扩展会话接口以包含更多所需信息
+// interface CustomSession {
+//   user: {
+//     id: string;
+//     email: string;
+//     name?: string;
+//     image?: string;
+//   };
+//   // 添加会话令牌字段
+//   sessionToken?: string;
+//   expires: string;
 // }
 
-export const { handlers, auth, signIn, signOut } = NextAuth(() => {
+export const { handlers, auth, signIn, signOut } = NextAuth((req) => {
   const pool = new Pool({
     connectionString: process.env.DATABASE_URL,
     ssl:
@@ -23,6 +27,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth(() => {
         ? { rejectUnauthorized: false }
         : undefined,
   });
+
   return {
     adapter: PostgresAdapter(pool),
     providers: [
@@ -87,6 +92,62 @@ export const { handlers, auth, signIn, signOut } = NextAuth(() => {
     },
     session: {
       strategy: "jwt",
+      // 增加会话过期时间为30天（如需更长时间）
+      maxAge: 30 * 24 * 60 * 60, // 30 days
     },
+    callbacks: {
+      // 修改会话回调以添加会话令牌和用户ID
+      async session({ session, token }) {
+        // 确保用户ID正确传递
+        if (session.user && token) {
+          session.user.id = (
+            (token.id as string) ||
+            token.sub ||
+            ""
+          ).toString();
+        }
+
+        // 从请求Cookie中获取会话令牌并添加到会话对象
+        if (req) {
+          const sessionToken =
+            req.cookies.get("next-auth.session-token")?.value ||
+            req.cookies.get("__Secure-next-auth.session-token")?.value;
+
+          // 将会话令牌添加到会话对象
+          if (sessionToken) {
+            (session as any).sessionToken = sessionToken;
+          }
+        }
+
+        return session;
+      },
+
+      // 增强JWT令牌回调
+      async jwt({ token, user, account }): Promise<typeof token> {
+        // 初次登录时，将用户信息添加到令牌
+        if (user) {
+          token.id = user.id;
+          // 可以添加更多用户信息
+          token.email = user.email;
+        }
+
+        // 如果有OAuth账号信息，也可以添加
+        if (account) {
+          token.accessToken = account.access_token;
+          token.provider = account.provider;
+        }
+
+        return token;
+      },
+    },
+    // 启用调试模式（开发环境）
+    debug: process.env.NODE_ENV === "development",
+    // 确保令牌安全
+    secret: process.env.NEXTAUTH_SECRET,
   };
 });
+
+// // 添加类型扩展
+// declare module "next-auth" {
+//   interface Session extends CustomSession {}
+// }
