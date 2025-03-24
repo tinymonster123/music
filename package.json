@@ -34,6 +34,7 @@
     "postcss-loader": "^8.1.1",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
+    "react-virtualized-list": "0.0.4-beta1",
     "recharts": "^2.15.1",
     "ssh2": "^1.16.0",
     "style-loader": "^4.0.0",
