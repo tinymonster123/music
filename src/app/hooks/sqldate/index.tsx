@@ -1,11 +1,15 @@
 import { create } from "zustand";
 
 export interface SQLdate {
-  sql: string | null;
-  setSQL: (sql: string | null) => void;
+  colums: string[] | null;
+  sqlColumns: string[] | null;
+  setSQL: (sqlColumns: string[] | null) => void;
+  setColums: (colums: string[] | null) => void;
 }
 
 export const useSQLStore = create<SQLdate>((set) => ({
-  sql: null,
-  setSQL: (sql: string | null) => set({ sql }),
+  colums: null,
+  sqlColumns: null,
+  setSQL: (sqlColumns: string[] | null) => set({ sqlColumns }),
+  setColums: (colums: string[] | null) => set({ colums }),
 }));
