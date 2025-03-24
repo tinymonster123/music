@@ -19,7 +19,7 @@ const PieBar = dynamic(() => import("@/app/component/piebar"), {
   ssr: false,
 });
 
-const SessionSearchInput = () => {
+export const SessionSearchInput = () => {
   return (
     <SessionProvider>
       <SearchInput />
