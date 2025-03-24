@@ -11,7 +11,7 @@ const SearchInput = () => {
   const { status } = useSession();
   const { toast } = useToast();
   const [query, setQuery] = useState("");
-  const { setSQL, setColums } = useSQLStore();
+  const { setSQL, setColumns } = useSQLStore();
   const ifAuth = status === "authenticated";
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
@@ -38,11 +38,11 @@ const SearchInput = () => {
         question: query.trim(),
       });
       const data = response.data;
-      // console.log(data);
+      console.log(data);
 
       if (data.status === 200 && data.success) {
         setSQL(data.data);
-        setColums(data.columns);
+        setColumns(data.columns);
         toast({
           description: "成功实现 text to sql",
         });
