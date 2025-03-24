@@ -11,7 +11,7 @@ const SearchInput = () => {
   const { status } = useSession();
   const { toast } = useToast();
   const [query, setQuery] = useState("");
-  const { setSQL } = useSQLStore();
+  const { setSQL, setColums } = useSQLStore();
   const ifAuth = status === "authenticated";
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
@@ -24,6 +24,8 @@ const SearchInput = () => {
       return;
     }
 
+    console.log(query);
+
     if (!query.trim()) {
       toast({
         description: "搜索内容不能为空",
@@ -33,11 +35,14 @@ const SearchInput = () => {
     }
     try {
       const response = await axios.post("/api/text2sql", {
-        query: query.trim(),
+        question: query.trim(),
       });
       const data = response.data;
+      // console.log(data);
+
       if (data.status === 200 && data.success) {
-        setSQL(data.sql);
+        setSQL(data.data);
+        setColums(data.columns);
         toast({
           description: "成功实现 text to sql",
         });
@@ -63,7 +68,8 @@ const SearchInput = () => {
         }
       }
     } catch (error: any) {
-      console.error(error.response.data.message);
+      // console.error(error.response.data.message);
+      console.error(error);
       const errorMessage = error.response.data.message || "请求错误";
       toast({
         description: `${errorMessage}`,
