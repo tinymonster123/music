@@ -52,7 +52,7 @@ const TopBar = () => {
           </Link>
           <Link
             href="/pages/login"
-            className="px-6 py-2 h-12 bg-pinky-deepRed text-black rounded-lg hover:bg-pinky-lightRed transition-colors "
+            className="px-6 py-2 h-12 bg-pinky-deepRed text-white rounded-lg hover:bg-pinky-lightRed transition-colors "
           >
             Log In
           </Link>
