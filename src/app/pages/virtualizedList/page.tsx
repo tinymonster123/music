@@ -1,4 +1,5 @@
 "use client";
+import { SessionLayout } from "../homepage";
 import { SessionSearchInput } from "../showpage/page";
 import React, { useState, useCallback, useEffect, useMemo } from "react";
 import { default as Virtual } from "react-virtualized-list";
@@ -146,12 +147,15 @@ export const DataList = () => {
 
 const VirtualizedList = () => {
   return (
-    <div className="container mx-auto p-4">
-      <div className="mb-6">
-        <SessionSearchInput />
+    <>
+      <SessionLayout />
+      <div className="container mx-auto p-4">
+        <div className="mb-6">
+          <SessionSearchInput />
+        </div>
+        <DataList />
       </div>
-      <DataList />
-    </div>
+    </>
   );
 };
 
