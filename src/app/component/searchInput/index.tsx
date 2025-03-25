@@ -5,6 +5,7 @@ import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { useSQLStore } from "@/app/hooks/sqldate";
 import { useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
 import axios from "axios";
 
 const SearchInput = () => {
@@ -13,6 +14,7 @@ const SearchInput = () => {
   const [query, setQuery] = useState("");
   const { setSQL, setColumns } = useSQLStore();
   const ifAuth = status === "authenticated";
+  const router = useRouter();
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -46,6 +48,7 @@ const SearchInput = () => {
         toast({
           description: "成功实现 text to sql",
         });
+        router.push("/pages/virtualizedList");
       } else {
         switch (data.status) {
           case 400:
