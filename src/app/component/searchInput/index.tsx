@@ -1,11 +1,12 @@
 "use client";
+import { ArrowLeft } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { useSQLStore } from "@/app/hooks/sqldate";
 import { useSession } from "next-auth/react";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 import axios from "axios";
 
 const SearchInput = () => {
@@ -15,7 +16,15 @@ const SearchInput = () => {
   const { setSQL, setColumns } = useSQLStore();
   const ifAuth = status === "authenticated";
   const router = useRouter();
+  const currentPage = usePathname();
 
+  const handleClick = () => {
+    if (currentPage === "/pages/showpage") {
+      router.push("/");
+    } else if (currentPage === "/pages/virtualizedList") {
+      router.push("/pages/showpage");
+    }
+  };
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     if (!ifAuth) {
@@ -87,6 +96,12 @@ const SearchInput = () => {
       className="h-20 flex justify-center items-center w-full px-4 md:px-8"
       onSubmit={handleSubmit}
     >
+      <div
+        className="h-6 w-6 rounded-full bg-[#ff0000] text-primary-foreground mr-5"
+        onClick={handleClick}
+      >
+        <ArrowLeft />
+      </div>
       <div className="flex flex-row gap-2 md:gap-4 w-full max-w-2xl">
         <div className="relative flex-1">
           <Input
