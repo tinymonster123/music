@@ -1,0 +1,14 @@
+# 排除 SSH 密钥
+src/ssh/*.pem
+*.pem
+
+# 其他敏感文件
+.env
+.env.local
+.env.*
+
+# 开发文件
+node_modules
+.git
+.gitignore
+README.md˝
