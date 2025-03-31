@@ -1,6 +1,6 @@
 "use client";
 import { SessionLayout } from "../homepage";
-import { SessionSearchInput } from "../showpage/page";
+import SessionSearchInput from "@/app/component/sessionsearchinput";
 import React, { useState, useCallback, useEffect, useMemo } from "react";
 import { default as Virtual } from "react-virtualized-list";
 import { useSQLStore } from "@/app/hooks/sqldate";
