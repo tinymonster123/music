@@ -5,7 +5,7 @@ import dynamic from "next/dynamic";
 import { Suspense } from "react";
 import PieChartData from "@/app/request/piechartdata";
 import LazyLoader from "@/app/component/lazyloader";
-import { SessionLayout } from "../homepage";
+import { SessionLayout } from "../homepage/page";
 import SessionSearchInput from "@/app/component/sessionsearchinput";
 
 const InteractiveBar = dynamic(() => import("@/app/component/interactivebar"), {

@@ -1,4 +1,5 @@
-import HomePage from "./pages/homepage";
+"use client";
+import HomePage from "./pages/homepage/page";
 
 const Home = () => {
   return (

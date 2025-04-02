@@ -1,5 +1,5 @@
 "use client";
-import { SessionLayout } from "../homepage";
+import { SessionLayout } from "../homepage/page";
 import SessionSearchInput from "@/app/component/sessionsearchinput";
 import React, { useState, useCallback, useEffect, useMemo } from "react";
 import { default as Virtual } from "react-virtualized-list";
