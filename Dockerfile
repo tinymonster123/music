@@ -100,7 +100,7 @@ ENV PORT=3000
 EXPOSE 3000
 
 # 启动应用（适用于方案一：完整应用）
-CMD ["yarn", "start"]
+# CMD ["yarn", "start"]
 
 # 启动应用（适用于方案二：standalone 模式）
-# CMD ["node", "server.js"]
+CMD ["node", "server.js"]
