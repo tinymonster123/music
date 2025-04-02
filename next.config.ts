@@ -7,26 +7,21 @@ const withTM = transpileModules(["ssh2"]);
 const nextConfig: NextConfig = withTM({
   output: "standalone",
   eslint: {
-    // 构建时忽略 ESLint 错误
     ignoreDuringBuilds: true,
   },
   typescript: {
-    // 可选：如果还有 TypeScript 错误也可以临时忽略
     ignoreBuildErrors: true,
   },
   experimental: {
     turbo: {
       rules: {
-        // 对于 ts、tsx、js、jsx 文件，默认使用 SWC 加载器处理
         "\\.(ts|tsx|js|jsx)$": {
           loaders: ["swc-loader"],
         },
-        // 处理 SVG 文件使用 SVGR 加载器
         "*.svg": {
           loaders: ["@svgr/webpack"],
           as: "*.js",
         },
-        // 处理 CSS 文件
         "\\.css$": {
           loaders: ["style-loader", "css-loader", "postcss-loader"],
         },
@@ -46,10 +41,11 @@ const nextConfig: NextConfig = withTM({
           net: false,
           tls: false,
           crypto: false,
+          ssh2: false,
         },
       };
 
-      // 处理 SVG 和 CSS
+      // SVG 和 CSS 处理
       const { module = { rules: [] } } = config;
       const rules = Array.isArray(module.rules) ? module.rules : [];
 
@@ -80,6 +76,29 @@ const nextConfig: NextConfig = withTM({
                 },
               },
             ],
+          },
+        ],
+      };
+    } else {
+      // 服务器端配置 - 关键修改在这里
+
+      // 服务器端配置
+      // @ts-ignore - 忽略 webpack externals 类型问题
+      config.externals = [
+        ...(Array.isArray(config.externals) ? config.externals : []),
+        "ssh2",
+      ];
+      // 添加处理 .node 文件的 loader
+      const { module = { rules: [] } } = config;
+      const rules = Array.isArray(module.rules) ? module.rules : [];
+
+      config.module = {
+        ...module,
+        rules: [
+          ...rules,
+          {
+            test: /\.node$/,
+            use: "node-loader",
           },
         ],
       };
