@@ -88,7 +88,8 @@ jobs:
               -p 3000:3000 \
               --env-file /root/app/.env \
               -v /root/app/src/ssh:/app/src/ssh:ro \
-              ${{ secrets.DOCKERHUB_USERNAME }}/nextjs-app:latest
+              ${{ secrets.DOCKERHUB_USERNAME }}/nextjs-app:latest \
+              -c "corepack enable && yarn set version 4.6.0 && yarn install && yarn start -H 0.0.0.0"
 
             # 清理未使用的镜像
             docker image prune -f
