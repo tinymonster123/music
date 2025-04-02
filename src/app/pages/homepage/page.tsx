@@ -2,7 +2,8 @@
 import TopBar from "@/app/component/topBar";
 import SessionTopBar from "@/app/component/sessionTopBar";
 import AnimatorLetter from "@/app/component/animatorletter";
-import Letter from "../../../assets/images/letter.svg";
+import Image from "next/image";
+import letterSvg from "../../../assets/images/letter.svg";
 import LazyLoader from "@/app/component/lazyloader";
 import Introduction from "../introduction";
 import { useEffect, useState } from "react";
@@ -11,7 +12,8 @@ import { useSession, SessionProvider } from "next-auth/react";
 const StaticLetter = () => {
   return (
     <div className="w-full h-screen flex items-center justify-center bg-white transform-gpu">
-      <Letter />
+      {/* 使用 Image 组件替代直接的 SVG 组件 */}
+      <Image src={letterSvg} alt="Letter" width={400} height={400} />
     </div>
   );
 };
