@@ -1,11 +1,18 @@
 # 构建阶段
-FROM node:20-alpine AS builder
-
-# 安装必要依赖（添加编译工具）
-RUN apk add --no-cache libc6-compat curl python3 make g++
+FROM node:20-bullseye AS builder
 
 # 设置工作目录
 WORKDIR /app
+
+# 更新软件源并安装必要依赖
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends \
+    python3 \
+    make \
+    g++ \
+    curl \
+    ca-certificates \
+    && rm -rf /var/lib/apt/lists/*
 
 # 启用 Corepack 并安装特定版本的 Yarn
 RUN corepack enable && yarn set version 4.6.0
@@ -25,6 +32,10 @@ RUN mkdir -p /app/src/ssh && \
 ENV SSH_KEY_PATH=/app/src/ssh/dummy.pem
 ENV NODE_ENV=production
 ENV NEXT_TELEMETRY_DISABLED=1
+# 在构建之前添加环境变量以禁用静态优化
+ENV NEXT_DISABLE_PRERENDER=true
+ENV NEXT_DISABLE_SSG=true
+
 
 # 安装依赖
 RUN yarn install
@@ -36,16 +47,10 @@ COPY . .
 RUN sed -i 's/fs.readFileSync(process.env.SSH_KEY_PATH || "")/fs.readFileSync(process.env.SSH_KEY_PATH || "\/app\/src\/ssh\/dummy.pem")/g' src/app/api/connection/connection.ts || echo "Connection file pattern not matched"
 
 # 修改 connection.ts 的另一种方法（如果上面的不匹配）
-RUN grep -q "fs.readFileSync" src/app/api/connection/connection.ts && \
-    echo "修改 connection.ts 文件" && \
-    sed -i '/fs.readFileSync/ s/process.env.SSH_KEY_PATH || ""/process.env.SSH_KEY_PATH || "\/app\/src\/ssh\/dummy.pem"/g' src/app/api/connection/connection.ts || \
-    echo "无法找到模式，可能需要手动检查代码"
-
-# 检查修改后的文件
-RUN echo "---- 显示 connection.ts 内容 ----" && cat src/app/api/connection/connection.ts | grep -A 3 readFileSync || echo "未找到 readFileSync"
-
-# 创建简化的 next.config.js
-RUN echo 'module.exports = { output: "standalone", eslint: { ignoreDuringBuilds: true }, typescript: { ignoreBuildErrors: true } }' > next.config.js
+# RUN grep -q "fs.readFileSync" src/app/api/connection/connection.ts && \
+#     echo "修改 connection.ts 文件" && \
+#     sed -i '/fs.readFileSync/ s/process.env.SSH_KEY_PATH || ""/process.env.SSH_KEY_PATH || "\/app\/src\/ssh\/dummy.pem"/g' src/app/api/connection/connection.ts || \
+#     echo "无法找到模式，可能需要手动检查代码"
 
 # 添加启动脚本
 RUN if ! grep -q '"start"' package.json; then \
@@ -64,23 +69,20 @@ RUN yarn build
 RUN ls -la .next/ || echo "未找到 .next 目录"
 
 # 运行阶段
-FROM node:20-alpine AS runner
-
-# 添加运行时依赖
-RUN apk add --no-cache libc6-compat
-
-# 创建 SSH 目录
-RUN mkdir -p /app/src/ssh && chmod 700 /app/src/ssh
+FROM node:20-bullseye-slim AS runner
 
 # 运行阶段工作目录
 WORKDIR /app
+
+# 创建 SSH 目录
+RUN mkdir -p /app/src/ssh && chmod 700 /app/src/ssh
 
 # 方案一：复制完整应用（适用于未成功生成 standalone 模式）
 COPY --from=builder /app/node_modules ./node_modules
 COPY --from=builder /app/public ./public
 COPY --from=builder /app/.next ./.next
 COPY --from=builder /app/package.json ./package.json
-COPY --from=builder /app/next.config.js ./next.config.js
+COPY --from=builder /app/next.config.ts ./next.config.ts
 
 # 方案二：如果生成了 standalone 模式，则取消下面的注释
 # COPY --from=builder /app/.next/standalone ./
