@@ -74,6 +74,9 @@ FROM node:20-bullseye-slim AS runner
 # 运行阶段工作目录
 WORKDIR /app
 
+# 启用 Corepack 并设置 Yarn 版本（新增这行）
+RUN corepack enable && yarn set version 4.6.0
+
 # 创建 SSH 目录
 RUN mkdir -p /app/src/ssh && chmod 700 /app/src/ssh
 
