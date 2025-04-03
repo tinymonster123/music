@@ -32,6 +32,7 @@ RUN mkdir -p /app/src/ssh && \
 ENV SSH_KEY_PATH=/app/src/ssh/dummy.pem
 ENV NODE_ENV=production
 ENV NEXT_TELEMETRY_DISABLED=1
+ENV NEXT_TURBO=1
 # 在构建之前添加环境变量以禁用静态优化
 ENV NEXT_DISABLE_PRERENDER=true
 ENV NEXT_DISABLE_SSG=true
