@@ -81,16 +81,16 @@ RUN corepack enable && yarn set version 4.6.0
 RUN mkdir -p /app/src/ssh && chmod 700 /app/src/ssh
 
 # 方案一：复制完整应用（适用于未成功生成 standalone 模式）
-COPY --from=builder /app/node_modules ./node_modules
-COPY --from=builder /app/public ./public
-COPY --from=builder /app/.next ./.next
-COPY --from=builder /app/package.json ./package.json
-COPY --from=builder /app/next.config.ts ./next.config.ts
+# COPY --from=builder /app/node_modules ./node_modules
+# COPY --from=builder /app/public ./public
+# COPY --from=builder /app/.next ./.next
+# COPY --from=builder /app/package.json ./package.json
+# COPY --from=builder /app/next.config.ts ./next.config.ts
 
 # 方案二：如果生成了 standalone 模式，则取消下面的注释
-# COPY --from=builder /app/.next/standalone ./
-# COPY --from=builder /app/.next/static ./.next/static
-# COPY --from=builder /app/public ./public
+COPY --from=builder /app/.next/standalone ./
+COPY --from=builder /app/.next/static ./.next/static
+COPY --from=builder /app/public ./public
 
 # 设置环境变量
 ENV NODE_ENV=production
