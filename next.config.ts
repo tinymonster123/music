@@ -12,6 +12,24 @@ const nextConfig: NextConfig = withTM({
   typescript: {
     ignoreBuildErrors: true,
   },
+  // 添加以下配置
+  compiler: {
+    // 启用 CSS 优化
+    minify: true,
+    // 确保 React 删除属性正确应用
+    removeConsole: process.env.NODE_ENV === "production",
+  },
+  // 可选：更改 PostCSS 配置
+  postcssLoaderOptions: {
+    implementation: require("postcss"),
+    postcssOptions: {
+      plugins: ["tailwindcss", "autoprefixer"],
+    },
+  },
+  // 确保 CSS 模块支持全局样式
+  cssModules: {
+    auto: true,
+  },
   experimental: {
     turbo: {
       rules: {
