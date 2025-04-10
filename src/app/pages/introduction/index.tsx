@@ -2,7 +2,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import SvgIcon from "@/app/component/passionate";
-import SVGLetter from "../../../assets/images/letter.svg";
+import SVGLetter from "../../../../public/letter.svg";
 import TextFade from "@/app/component/textfade";
 import GradualSpacing from "@/app/component/gradualspace";
 import TypingEffect from "@/app/component/typing";
