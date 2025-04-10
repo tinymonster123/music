@@ -1,6 +1,9 @@
+// next.config.ts
 import type { NextConfig } from "next";
 import type { Configuration as WebpackConfig } from "webpack";
 import transpileModules from "next-transpile-modules";
+import path from "path";
+const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 
 const withTM = transpileModules(["ssh2"]);
 
@@ -12,114 +15,84 @@ const nextConfig: NextConfig = withTM({
   typescript: {
     ignoreBuildErrors: true,
   },
-  // 添加以下配置
   compiler: {
-    // 启用 CSS 优化
-    minify: true,
-    // 确保 React 删除属性正确应用
     removeConsole: process.env.NODE_ENV === "production",
   },
-  // 可选：更改 PostCSS 配置
-  postcssLoaderOptions: {
-    implementation: require("postcss"),
-    postcssOptions: {
-      plugins: ["tailwindcss", "autoprefixer"],
-    },
-  },
-  // 确保 CSS 模块支持全局样式
-  cssModules: {
-    auto: true,
-  },
   experimental: {
-    turbo: {
-      rules: {
-        "\\.(ts|tsx|js|jsx)$": {
-          loaders: ["swc-loader"],
-        },
-        "*.svg": {
-          loaders: ["@svgr/webpack"],
-          as: "*.js",
-        },
-        "\\.css$": {
-          loaders: ["style-loader", "css-loader", "postcss-loader"],
-        },
-      },
-    },
+    optimizeServerReact: true,
+    optimizeCss: true,
   },
-  webpack(config: WebpackConfig, { isServer }: { isServer: boolean }) {
+  images: {
+    domains: [],
+    dangerouslyAllowSVG: true,
+    contentSecurityPolicy: "default-src 'self'; script-src 'none'; sandbox;",
+    formats: ["image/webp"],
+  },
+  productionBrowserSourceMaps: false,
+
+  webpack(config: WebpackConfig, { dev, isServer }) {
+    config.module.rules.push({
+      test: /\.svg$/,
+      use: ["@svgr/webpack"],
+    });
+
     // 客户端配置
     if (!isServer) {
-      // 处理 Node.js 模块兼容
-      const { resolve = {} } = config;
       config.resolve = {
-        ...resolve,
+        ...config.resolve,
         fallback: {
-          ...resolve.fallback,
+          ...config.resolve?.fallback,
           fs: false,
           net: false,
           tls: false,
           crypto: false,
           ssh2: false,
+          stream: require.resolve("stream-browserify"),
         },
       };
 
-      // SVG 和 CSS 处理
-      const { module = { rules: [] } } = config;
-      const rules = Array.isArray(module.rules) ? module.rules : [];
-
-      config.module = {
-        ...module,
-        rules: [
-          ...rules,
+      // 为所有 CSS 文件应用 postcss-loader，包括全局 CSS 和模块 CSS
+      config.module.rules.push({
+        test: /\.css$/i,
+        use: [
+          dev ? "style-loader" : MiniCssExtractPlugin.loader,
           {
-            test: /\.svg$/,
-            use: [
-              {
-                loader: "@svgr/webpack",
-                options: { svgo: false },
+            loader: "css-loader",
+            options: {
+              importLoaders: 1,
+              modules: {
+                auto: true, // 自动检测是否为 CSS 模块
+                localIdentName: "[local]__[hash:base64:5]",
               },
-            ],
+            },
           },
           {
-            test: /\.css$/,
-            use: [
-              "style-loader",
-              "css-loader",
-              {
-                loader: "postcss-loader",
-                options: {
-                  postcssOptions: {
-                    plugins: ["tailwindcss", "autoprefixer"],
-                  },
-                },
+            loader: "postcss-loader",
+            options: {
+              postcssOptions: {
+                config: path.resolve(__dirname, "postcss.config.js"),
               },
-            ],
+            },
           },
         ],
-      };
-    } else {
-      // 服务器端配置 - 关键修改在这里
+      });
 
-      // 服务器端配置
-      // @ts-ignore - 忽略 webpack externals 类型问题
+      // 添加 Plugin
+      config.plugins = [
+        ...(config.plugins || []),
+        new MiniCssExtractPlugin({
+          filename: "static/css/[name].[contenthash:8].css",
+          chunkFilename: "static/css/[name].[contenthash:8].chunk.css",
+          ignoreOrder: true,
+        }),
+      ];
+    } else {
       config.externals = [
         ...(Array.isArray(config.externals) ? config.externals : []),
         "ssh2",
+        "sharp",
+        "canvas",
       ];
-      // 添加处理 .node 文件的 loader
-      const { module = { rules: [] } } = config;
-      const rules = Array.isArray(module.rules) ? module.rules : [];
-
-      config.module = {
-        ...module,
-        rules: [
-          ...rules,
-          {
-            test: /\.node$/,
-            use: "node-loader",
-          },
-        ],
-      };
     }
 
     return config;
