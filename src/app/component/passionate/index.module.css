@@ -1,3 +1,17 @@
+.animated {
+  animation: fadeIn 1s ease-in-out forwards;
+}
+
+.animable {
+  fill-opacity: 0;
+  animation: fadeInOpacity .5s forwards;
+  animation-delay: var(--animation-delay, 0s);
+}
+
+.animatorActive {
+  animation-duration: 1.5s;
+}
+
 svg#freepik_stories-passionate:not(.animated) .animable {
   opacity: 0;
 }
@@ -67,5 +81,23 @@ svg#freepik_stories-passionate.animated #freepik--musical-notes--inject-113 {
   100% {
     opacity: 1;
     transform: translateY(0px);
+  }
+}
+
+@keyframes fadeIn {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+@keyframes fadeInOpacity {
+  0% {
+    fill-opacity: 0;
+  }
+  100% {
+    fill-opacity: 1;
   }
 }
