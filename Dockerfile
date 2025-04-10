@@ -23,6 +23,8 @@ COPY package.json yarn.lock ./
 # 复制 .yarnrc.yml 文件（如果存在）
 COPY .yarnrc.yml ./
 
+COPY public ./public
+
 # 创建 SSH 目录并添加临时密钥（仅供构建使用）
 RUN mkdir -p /app/src/ssh && \
     echo "dummy key for build only" > /app/src/ssh/dummy.pem && \
@@ -36,6 +38,7 @@ ENV NEXT_TURBO=1
 # 在构建之前添加环境变量以禁用静态优化
 ENV NEXT_DISABLE_PRERENDER=true
 ENV NEXT_DISABLE_SSG=true
+ENV NEXT_MINIMAL_BUILD=false
 
 
 # 安装依赖
