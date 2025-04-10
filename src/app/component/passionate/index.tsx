@@ -1,17 +1,18 @@
 import * as React from "react";
-import './index.css'
+import "./index.module.css"; // 直接导入CSS文件而不作为模块
 
 const SvgIcon: React.FC<React.SVGProps<SVGElement>> = (props) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
     id="freepik_stories-passionate"
-    className="animated"
+    className="animated" // 直接使用类名
     version="1.1"
     viewBox="0 0 500 500"
+    {...props}
   >
     <g
       id="freepik--background-complete--inject-113"
-      className="animable animator-active"
+      className="animable animatorActive"
     >
       <path
         id="el2tzdbrwsghg"
@@ -35,7 +36,6 @@ const SvgIcon: React.FC<React.SVGProps<SVGElement>> = (props) => (
         transformOrigin="305.615px 363.96px"
       ></path>
       <path
-        id="el9yi28b0rl8a"
         fill="#E0E0E0"
         d="M238.32 229.47h134.14v85.94H238.32z"
         className="animable"
