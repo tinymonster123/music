@@ -26,7 +26,7 @@ const AnimatorLetter = ({ handleAnimationComplete }: AnimationComplete) => {
       <Animator
         pathAnimation={{
           type: "tween",
-          duration: 5, // 閹镐胶鐢婚弮鍫曟？閸欘垯浜掗弽瑙勫祦闂団偓鐟曚浇鐨熼弫锟�
+          duration: 5,
           ease: "easeInOut",
         }}
         from={0}
