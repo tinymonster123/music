@@ -10,7 +10,7 @@ import { useSession, SessionProvider } from "next-auth/react";
 
 const StaticLetter = () => {
   return (
-    <div className="w-full h-screen bg-white transform-gpu">
+    <div className="w-full h-screen flex justify-center items-center bg-white transform-gpu">
       <Image
         src="/letter.svg"
         alt="Letter"
