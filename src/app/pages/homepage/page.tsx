@@ -10,13 +10,19 @@ import { useSession, SessionProvider } from "next-auth/react";
 
 const StaticLetter = () => {
   return (
-    <div className="w-full h-screen flex items-center justify-center bg-white transform-gpu">
-      {/* 使用 Image 组件替代直接的 SVG 组件 */}
+    <div className="w-full h-screen bg-white transform-gpu">
       <Image
         src="/letter.svg"
         alt="Letter"
-        width={400}
-        height={400}
+        width={681} // 与动画组件中的 SVG 宽度保持一致
+        height={131} // 与动画组件中的 SVG 高度保持一致
+        className="w-full"
+        style={{
+          display: "block",
+          maxWidth: "681px",
+          height: "auto",
+          margin: "0 auto",
+        }}
         loading="eager"
         priority={true}
       />
