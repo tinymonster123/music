@@ -1,7 +1,9 @@
+// next.config.ts
 import type { NextConfig } from "next";
 import type { Configuration as WebpackConfig } from "webpack";
 import transpileModules from "next-transpile-modules";
 import path from "path";
+const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 
 const withTM = transpileModules(["ssh2"]);
 
@@ -46,11 +48,6 @@ const nextConfig: NextConfig = withTM({
   productionBrowserSourceMaps: false,
 
   webpack(config: WebpackConfig, { dev, isServer }) {
-    // Ensure config.module and config.module.rules exist
-    config.module = config.module || {};
-    config.module.rules = config.module.rules || [];
-
-    // SVG 处理配置
     config.module.rules.push({
       test: /\.svg$/,
       use: ["@svgr/webpack"],
@@ -58,7 +55,6 @@ const nextConfig: NextConfig = withTM({
 
     // 客户端配置
     if (!isServer) {
-      // 添加 resolve fallbacks
       config.resolve = {
         ...config.resolve,
         fallback: {
@@ -72,27 +68,41 @@ const nextConfig: NextConfig = withTM({
         },
       };
 
-      // CSS 文件处理配置
+      // 为所有 CSS 文件应用 postcss-loader，包括全局 CSS 和模块 CSS
       config.module.rules.push({
         test: /\.css$/i,
         use: [
-          "style-loader",
+          dev ? "style-loader" : MiniCssExtractPlugin.loader,
           {
             loader: "css-loader",
             options: {
               importLoaders: 1,
+              modules: {
+                auto: true, // 自动检测是否为 CSS 模块
+                localIdentName: "[local]__[hash:base64:5]",
+              },
             },
           },
           {
             loader: "postcss-loader",
             options: {
               postcssOptions: {
-                plugins: ["tailwindcss", "autoprefixer"],
+                config: path.resolve(__dirname, "postcss.config.js"),
               },
             },
           },
         ],
       });
+
+      // 添加 Plugin
+      config.plugins = [
+        ...(config.plugins || []),
+        new MiniCssExtractPlugin({
+          filename: "static/css/[name].[contenthash:8].css",
+          chunkFilename: "static/css/[name].[contenthash:8].chunk.css",
+          ignoreOrder: true,
+        }),
+      ];
     } else {
       config.externals = [
         ...(Array.isArray(config.externals) ? config.externals : []),
