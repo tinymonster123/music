@@ -10,22 +10,22 @@ import { useSession, SessionProvider } from "next-auth/react";
 
 const StaticLetter = () => {
   return (
-    <div className="w-full h-screen flex justify-center items-center bg-white transform-gpu">
-      <Image
-        src="/letter.svg"
-        alt="Letter"
-        width={681} // 与动画组件中的 SVG 宽度保持一致
-        height={131} // 与动画组件中的 SVG 高度保持一致
-        className="w-full"
-        style={{
-          display: "block",
-          maxWidth: "681px",
-          height: "auto",
-          margin: "0 auto",
-        }}
-        loading="eager"
-        priority={true}
-      />
+    <div className="w-full h-screen flex items-center justify-center bg-white transform-gpu">
+      <div className="w-full" style={{ maxWidth: "681pt" }}>
+        <Image
+          src="/letter.svg"
+          alt="Letter"
+          width={681}
+          height={131}
+          className="w-full"
+          style={{
+            height: "auto",
+          }}
+          loading="eager"
+          priority={true}
+          unoptimized={true} // 阻止 Next.js 优化图像以保持与 SVG 相同的渲染方式
+        />
+      </div>
     </div>
   );
 };
