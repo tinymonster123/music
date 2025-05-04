@@ -19,29 +19,29 @@ const Introduction = () => {
     <div className="bg-white w-full min-h-screen flex items-center">
       <div className="container mx-auto py-16 px-4 md:px-8 lg:px-16">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+          {/* 左侧区域 - SVG图标占满整个左侧 */}
           <div
-            className={`transition-all duration-1000 ease-in-out ${
+            className={`transition-all duration-1000 ease-in-out flex items-center justify-center w-full h-full ${
               ifStart
                 ? "translate-x-0 opacity-100"
                 : "-translate-x-full opacity-0"
             }`}
           >
-            <div className="flex justify-end md:justify-end ">
-              <SvgIcon className="w-32 h-32 md:w-48 md:h-48 transform-gpu hover:scale-105 transition-transform" />
-            </div>
+            <SvgIcon className="w-full h-full max-h-[500px] transform-gpu hover:scale-105 transition-transform" />
           </div>
 
-          <div className="flex flex-col items-center md:items-start space-y-4">
+          {/* 右侧区域 - SVG字母和文本内容 */}
+          <div className="flex flex-col items-center md:items-start space-y-8">
             <TextFade
               direction="down"
               duration={5}
-              delay={5}
+              delay={1}
               className="flex justify-center md:justify-start w-full"
             >
               <SVGLetter className="w-4/5 max-w-md transform-gpu hover:scale-105 transition-transform" />
             </TextFade>
 
-            <div className="flex flex-col items-center md:items-start gap-6 text-black">
+            <div className="flex flex-col items-center md:items-start gap-6 !mt-0 text-black">
               <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight">
                 <GradualSpacing text="Build for music" />
                 <span className="text-[#ff0000]">
@@ -62,22 +62,6 @@ const Introduction = () => {
                   </button>
                 </Link>
               </BlurIn>
-              {/* <TextFade
-                direction="up"
-                delay={5}
-                duration={2}
-                className="text-sm text-gray-500 mt-8"
-              >
-                @copyright Database from{" "}
-                <a
-                  href="https://metabrainz.org/datasets/postgres-dumps#musicbrainz"
-                  className="text-blue-600 hover:text-blue-800 underline transition-colors"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  MusicBrainz Database
-                </a>
-              </TextFade> */}
             </div>
           </div>
         </div>
