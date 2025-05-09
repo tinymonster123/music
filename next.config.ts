@@ -3,12 +3,15 @@ import type { NextConfig } from "next";
 import type { Configuration as WebpackConfig } from "webpack";
 import transpileModules from "next-transpile-modules";
 import path from "path";
+import CompressionPlugin from "compression-webpack-plugin";
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
+const zlib = require("zlib");
 
 const withTM = transpileModules(["ssh2"]);
 
 const nextConfig: NextConfig = withTM({
   output: "standalone",
+  compress: false,
   eslint: {
     ignoreDuringBuilds: true,
   },
@@ -48,6 +51,8 @@ const nextConfig: NextConfig = withTM({
   productionBrowserSourceMaps: false,
 
   webpack(config: WebpackConfig, { dev, isServer }) {
+    config.module = config.module ?? {};
+    config.module.rules = config.module.rules ?? [];
     config.module.rules.push({
       test: /\.svg$/,
       use: ["@svgr/webpack"],
@@ -91,7 +96,7 @@ const nextConfig: NextConfig = withTM({
               },
             },
           },
-        ],
+        ], 
       });
 
       // 添加 Plugin
@@ -102,7 +107,44 @@ const nextConfig: NextConfig = withTM({
           chunkFilename: "static/css/[name].[contenthash:8].chunk.css",
           ignoreOrder: true,
         }),
+        new CompressionPlugin({
+          filename: "[path][base].br",
+          algorithm: "brotliCompress",
+          test: /\.(js|css|html|svg)$/,
+          compressionOptions: {
+            level: 11,
+          },
+          threshold: 10240,
+          minRatio: 0.8,
+          deleteOriginalAssets: false,
+        }),
       ];
+
+      // 添加 optimization
+      config.optimization = {
+        ...config.optimization,
+        splitChunks: {
+          chunks: "all",
+          minSize: 20000,
+          minRemainingSize: 0,
+          minChunks: 1,
+          maxAsyncRequests: 30,
+          maxInitialRequests: 30,
+          enforceSizeThreshold: 50000,
+          cacheGroups: {
+            defaultVendors: {
+              test: /[\\/]node_modules[\\/]/,
+              priority: -10,
+              reuseExistingChunk: true,
+            },
+            default: {
+              minChunks: 2,
+              priority: -20,
+              reuseExistingChunk: true,
+            },
+          },
+        },
+      };
     } else {
       config.externals = [
         ...(Array.isArray(config.externals) ? config.externals : []),
