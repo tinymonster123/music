@@ -63,6 +63,7 @@
     "@types/react-dom": "^19.0.4",
     "@types/ssh2": "^1",
     "cmake-js": "^7.3.0",
+    "compression-webpack-plugin": "^11.1.0",
     "crypto-browserify": "^3.12.1",
     "eslint": "^9",
     "eslint-config-next": "15.1.7",
