@@ -144,6 +144,8 @@ export const { handlers, auth, signIn, signOut } = NextAuth((req) => {
     debug: process.env.NODE_ENV === "development",
     // 确保令牌安全
     secret: process.env.NEXTAUTH_SECRET,
+    // 添加此行解决 UntrustedHost 错误
+    trustHost: true,
   };
 });
 
