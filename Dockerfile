@@ -1,18 +1,21 @@
 # 构建阶段
-FROM node:20-bullseye AS builder
+FROM node:20-bookworm AS builder
 
 # 设置工作目录
 WORKDIR /app
 
-# 更新软件源并安装必要依赖
+# 更新软件源并安装必要依赖，完成后清理缓存减小镜像体积
 RUN apt-get update && \
+    apt-get upgrade -y && \
     apt-get install -y --no-install-recommends \
     python3 \
     make \
     g++ \
     curl \
     ca-certificates \
-    && rm -rf /var/lib/apt/lists/*
+    && apt-get clean \
+    && apt-get autoremove -y \
+    && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 # 启用 Corepack 并安装特定版本的 Yarn
 RUN corepack enable && yarn set version 4.6.0
@@ -73,10 +76,21 @@ RUN yarn build
 RUN ls -la .next/ || echo "未找到 .next 目录"
 
 # 运行阶段
-FROM node:20-bullseye-slim AS runner
+FROM node:20-bookworm-slim AS runner
 
 # 运行阶段工作目录
 WORKDIR /app
+
+# 安全更新
+RUN apt-get update && \
+    apt-get upgrade -y && \
+    apt-get install -y --no-install-recommends ca-certificates && \
+    apt-get clean && \
+    apt-get autoremove -y && \
+    rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+
+# 创建非root用户
+RUN groupadd -r nextjs && useradd -r -g nextjs nextjs
 
 # 启用 Corepack 并设置 Yarn 版本（新增这行）
 RUN corepack enable && yarn set version 4.6.0
@@ -95,6 +109,12 @@ RUN mkdir -p /app/src/ssh && chmod 700 /app/src/ssh
 COPY --from=builder /app/.next/standalone ./
 COPY --from=builder /app/.next/static ./.next/static
 COPY --from=builder /app/public ./public
+
+# 设置正确的文件所有权
+RUN chown -R nextjs:nextjs /app
+
+# 切换到非root用户
+USER nextjs
 
 # 设置环境变量
 ENV NODE_ENV=production
