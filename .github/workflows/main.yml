@@ -46,7 +46,7 @@ jobs:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           port: 22
           source: "docker-compose.prod.yml"
-          target: "/root/app/"
+          target: "/app/"
           strip_components: 0
           overwrite: true
           debug: true
