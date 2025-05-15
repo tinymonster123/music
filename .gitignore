@@ -44,3 +44,19 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# 环境变量
+.env
+.env.local
+.env.*.local
+.env.development
+.env.test
+.env.production
+
+# SSH keys
+src/ssh/*
+!src/ssh/.gitkeep
+
+# Docker secrets
+secrets/
+*.txt
