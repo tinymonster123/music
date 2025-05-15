@@ -1,0 +1,76 @@
+version: '3.8'
+
+services:
+  app:
+    image: ${DOCKERHUB_USERNAME}/nextjs-app:latest
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+      - SSH_KEY_PATH=/run/secrets/ssh_key
+      - DATABASE_URL=/run/secrets/database_url
+      - DB_USER=/run/secrets/db_user
+      - DB_PASSWORD=/run/secrets/db_password
+      - DB_HOST=/run/secrets/db_host
+      - DB_PORT=/run/secrets/db_port
+      - DB_NAME=/run/secrets/db_name
+      - NEXT_PUBLIC_AUTHORIZE_URL=/run/secrets/authorize_url
+      - AUTHORIZE_URL=/run/secrets/authorize_url
+      - BASE_URL=/run/secrets/base_url
+      - TEXT2SQL_URL=/run/secrets/text2sql_url
+      - NEXTAUTH_SECRET=/run/secrets/nextauth_secret
+      - NEXTAUTH_URL=/run/secrets/nextauth_url
+      - AUTH_GITHUB_ID=/run/secrets/auth_github_id
+      - AUTH_GITHUB_SECRET=/run/secrets/auth_github_secret
+    secrets:
+      - ssh_key
+      - database_url
+      - db_user
+      - db_password
+      - db_host
+      - db_port
+      - db_name
+      - authorize_url
+      - base_url
+      - text2sql_url
+      - nextauth_secret
+      - nextauth_url
+      - auth_github_id
+      - auth_github_secret
+    deploy:
+      resources:
+        limits:
+          memory: 1G
+      restart_policy:
+        condition: on-failure
+        max_attempts: 3
+
+secrets:
+  ssh_key:
+    file: ./secrets/ssh_key.txt
+  database_url:
+    file: ./secrets/database_url.txt
+  db_user:
+    file: ./secrets/db_user.txt
+  db_password:
+    file: ./secrets/db_password.txt
+  db_host:
+    file: ./secrets/db_host.txt
+  db_port:
+    file: ./secrets/db_port.txt
+  db_name:
+    file: ./secrets/db_name.txt
+  authorize_url:
+    file: ./secrets/authorize_url.txt
+  base_url:
+    file: ./secrets/base_url.txt
+  text2sql_url:
+    file: ./secrets/text2sql_url.txt
+  nextauth_secret:
+    file: ./secrets/nextauth_secret.txt
+  nextauth_url:
+    file: ./secrets/nextauth_url.txt
+  auth_github_id:
+    file: ./secrets/auth_github_id.txt
+  auth_github_secret:
+    file: ./secrets/auth_github_secret.txt 
