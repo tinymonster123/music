@@ -37,6 +37,17 @@ jobs:
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
+      # 复制配置文件到服务器
+      - name: Copy configuration files
+        uses: appleboy/scp-action@master
+        with:
+          host: ${{ secrets.SERVER_IP }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          source: "docker-compose.prod.yml"
+          target: "/root/app/"
+          strip_components: 0
+
       # 在服务器上部署
       - name: Deploy to server
         uses: appleboy/ssh-action@master
@@ -45,51 +56,48 @@ jobs:
           username: ${{ secrets.SSH_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
-            # 创建目录存储密钥
-            mkdir -p /root/app/src/ssh
-            chmod 700 /root/app/src/ssh
+            # 创建应用目录
+            mkdir -p /root/app
+            cd /root/app
 
-            echo "${{ secrets.SSH_KEY_PATH }}" | base64 -d > /root/app/src/ssh/ting.pem
-            chmod 600 /root/app/src/ssh/ting.pem
+            # 创建 secrets 目录
+            mkdir -p secrets
+            chmod 700 secrets
 
-            # 创建环境变量
-            cat > /root/app/.env << EOL
-            SSH_HOST=47.121.193.152
-            SSH_USER=root
-            SSH_KEY_PATH=/app/src/ssh/ting.pem
-            DATABASE_URL=${{ secrets.DATABASE_URL }}
-            DB_USER=${{ secrets.DB_USER }}
-            DB_PORT=${{ secrets.DB_PORT }}
-            DB_HOST=${{ secrets.DB_HOST }}
-            DB_PASSWORD=${{ secrets.DB_PASSWORD }}
-            DB_NAME=${{ secrets.DB_NAME }}
-            NEXT_PUBLIC_AUTHORIZE_URL=${{ secrets.AUTHORIZE_URL }}
-            AUTHORIZE_URL=${{ secrets.AUTHORIZE_URL }}
-            BASE_URL=${{ secrets.BASE_URL }}
-            TEXT2SQL_URL=${{ secrets.TEXT2SQL_URL }}
-            SERVER_IP=${{ secrets.SERVER_IP }}
-            NEXTAUTH_SECRET=${{ secrets.NEXTAUTH_SECRET }}
-            NEXTAUTH_URL=${{ secrets.NEXTAUTH_URL }}
-            AUTH_GITHUB_ID=${{ secrets.AUTH_GITHUB_ID }}
-            AUTH_GITHUB_SECRET=${{ secrets.AUTH_GITHUB_SECRET }}
-            EOL
+            # 创建 secret 文件
+            echo "${{ secrets.SSH_PRIVATE_KEY }}" | base64 -d > secrets/ssh_key.txt
+            echo "${{ secrets.DATABASE_URL }}" > secrets/database_url.txt
+            echo "${{ secrets.DB_USER }}" > secrets/db_user.txt
+            echo "${{ secrets.DB_PASSWORD }}" > secrets/db_password.txt
+            echo "${{ secrets.DB_HOST }}" > secrets/db_host.txt
+            echo "${{ secrets.DB_PORT }}" > secrets/db_port.txt
+            echo "${{ secrets.DB_NAME }}" > secrets/db_name.txt
+            echo "${{ secrets.AUTHORIZE_URL }}" > secrets/authorize_url.txt
+            echo "${{ secrets.BASE_URL }}" > secrets/base_url.txt
+            echo "${{ secrets.TEXT2SQL_URL }}" > secrets/text2sql_url.txt
+            echo "${{ secrets.NEXTAUTH_SECRET }}" > secrets/nextauth_secret.txt
+            echo "${{ secrets.NEXTAUTH_URL }}" > secrets/nextauth_url.txt
+            echo "${{ secrets.AUTH_GITHUB_ID }}" > secrets/auth_github_id.txt
+            echo "${{ secrets.AUTH_GITHUB_SECRET }}" > secrets/auth_github_secret.txt
+
+            # 设置文件权限
+            chmod 600 secrets/*.txt
+
+            # 初始化 Docker Swarm（如果尚未初始化）
+            docker swarm init || true
 
             # 拉取最新镜像
             docker pull ${{ secrets.DOCKERHUB_USERNAME }}/nextjs-app:latest
 
-            # 停止并删除旧容器
-            docker stop nextjs-app || true
-            docker rm nextjs-app || true
+            # 部署或更新服务
+            docker stack deploy -c docker-compose.prod.yml nextjs-app
 
-            # 运行新容器
-            docker run -d \
-              --name nextjs-app \
-              --restart unless-stopped \
-              --memory=1g \
-              -p 3000:3000 \
-              --env-file /root/app/.env \
-              -v /root/app/src/ssh:/app/src/ssh:ro \
-              ${{ secrets.DOCKERHUB_USERNAME }}/nextjs-app:latest
+            # 等待服务启动
+            sleep 10
 
-            # 清理未使用的镜像
-            docker image prune -f
+            # 检查服务状态
+            docker service ls
+            docker service ps nextjs-app_app
+
+            # 清理敏感文件
+            rm -rf secrets/
