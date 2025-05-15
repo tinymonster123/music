@@ -7,7 +7,7 @@ set -e
 mkdir -p secrets
 
 # 从环境变量创建 secret 文件
-echo "$SSH_KEY" > secrets/ssh_key.txt
+echo "$SSH_PRIVATE_KEY" > secrets/ssh_private_key.txt
 echo "$DATABASE_URL" > secrets/database_url.txt
 echo "$DB_USER" > secrets/db_user.txt
 echo "$DB_PASSWORD" > secrets/db_password.txt
