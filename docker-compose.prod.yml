@@ -7,7 +7,11 @@ services:
       - "3000:3000"
     environment:
       - NODE_ENV=production
-      - SSH_KEY_PATH=/run/secrets/ssh_key
+      - SSH_KEY_MIDDLE=/run/secrets/ssh_key_middle
+      - SSH_PRIVATE_KEY=/run/secrets/ssh_key
+      - SSH_KEY_PATH=/run/secrets/ssh_key_path
+      - SSH_USER=/run/secrets/ssh_user
+      - SSH_HOST=/run/secrets/ssh_host
       - DATABASE_URL=/run/secrets/database_url
       - DB_USER=/run/secrets/db_user
       - DB_PASSWORD=/run/secrets/db_password
@@ -27,6 +31,10 @@ services:
       - database_url
       - db_user
       - db_password
+      - ssh_key_path
+      - ssh_user
+      - ssh_host
+      - ssh_key_middle
       - db_host
       - db_port
       - db_name
@@ -46,10 +54,18 @@ services:
         max_attempts: 3
 
 secrets:
+  ssh_key_middle:
+    file: ./secrets/ssh_key_middle.txt
   ssh_key:
     file: ./secrets/ssh_key.txt
   database_url:
     file: ./secrets/database_url.txt
+  ssh_key_path:
+    file: ./secrets/ssh_key_path.txt
+  ssh_user:
+    file: ./secrets/ssh_user.txt
+  ssh_host:
+    file: ./secrets/ssh_host.txt
   db_user:
     file: ./secrets/db_user.txt
   db_password:

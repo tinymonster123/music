@@ -68,6 +68,7 @@ jobs:
             chmod 700 secrets
 
             # 创建 secret 文件
+            echo "${{ secrets.SSH_KEY_MIDDLE }}" > secrets/ssh_key_middle.txt
             echo "${{ secrets.SSH_PRIVATE_KEY }}" > secrets/ssh_key.txt
             echo "${{ secrets.DATABASE_URL }}" > secrets/database_url.txt
             echo "${{ secrets.DB_USER }}" > secrets/db_user.txt
@@ -82,6 +83,9 @@ jobs:
             echo "${{ secrets.NEXTAUTH_URL }}" > secrets/nextauth_url.txt
             echo "${{ secrets.AUTH_GITHUB_ID }}" > secrets/auth_github_id.txt
             echo "${{ secrets.AUTH_GITHUB_SECRET }}" > secrets/auth_github_secret.txt
+            echo "${{ secrets.SSH_USER }}" > secrets/ssh_user.txt
+            echo "${{ secrets.SSH_HOST }}" > secrets/ssh_host.txt
+            echo "${{ secrets.SSH_KEY_PATH }}" > secrets/ssh_key_path.txt
 
             # 设置文件权限
             chmod 600 secrets/*.txt
