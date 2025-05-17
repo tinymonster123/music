@@ -9,7 +9,7 @@ services:
       - NODE_ENV=production
       - SSH_KEY_MIDDLE=/run/secrets/ssh_key_middle
       - SSH_PRIVATE_KEY=/run/secrets/ssh_key
-      - SSH_KEY_PATH=/run/secrets/ssh_key_path
+      - SSH_KEY_PATH=/app/ssh_key_middle_file
       - SSH_USER=/run/secrets/ssh_user
       - SSH_HOST=/run/secrets/ssh_host
       - DATABASE_URL=/run/secrets/database_url
@@ -26,6 +26,12 @@ services:
       - NEXTAUTH_URL=/run/secrets/nextauth_url
       - AUTH_GITHUB_ID=/run/secrets/auth_github_id
       - AUTH_GITHUB_SECRET=/run/secrets/auth_github_secret
+    volumes:
+      - type: bind
+        source: /run/secrets/ssh_key_middle
+        target: /app/ssh_key_middle_file
+        read_only: true
+
     secrets:
       - ssh_key
       - database_url
