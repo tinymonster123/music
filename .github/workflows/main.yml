@@ -46,7 +46,7 @@ jobs:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           port: 22
           source: "docker-compose.prod.yml"
-          target: "/app/"
+          target: "/root/app/"
           strip_components: 0
           overwrite: true
           debug: true
@@ -89,6 +89,9 @@ jobs:
 
             # 设置文件权限
             chmod 600 secrets/*.txt
+
+            chmod -R 755 /root/app
+
 
             # 初始化 Docker Swarm（如果尚未初始化）
             docker swarm init || true
