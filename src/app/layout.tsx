@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import localFont from "next/font/local";
 import React from "react";
 import "./globals.css";
+import { Toaster } from "@/components/ui/toaster";
 
 const monaSans = localFont({
   src: "../assets/font/Mona-Sans.ttf",
@@ -51,6 +52,7 @@ export default function RootLayout({
         className={`${monaSans.variable} ${sourceSerif.variable} ${helveticaRounded.variable} antialiased`}
       >
         {children}
+        <Toaster />
       </body>
     </html>
   );
