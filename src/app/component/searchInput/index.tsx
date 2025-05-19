@@ -2,12 +2,13 @@
 import { ArrowLeft } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { useSQLStore } from "@/app/hooks/sqldate";
 import { useSession } from "next-auth/react";
 import { useRouter, usePathname } from "next/navigation";
 import axios from "axios";
+import { debounce } from "lodash";
 
 const SearchInput = () => {
   const { status } = useSession();
@@ -17,6 +18,15 @@ const SearchInput = () => {
   const ifAuth = status === "authenticated";
   const router = useRouter();
   const currentPage = usePathname();
+  const cancelTokenRef = useRef<any>(null);
+
+  useEffect(() => {
+    return () => {
+      if (cancelTokenRef.current) {
+        cancelTokenRef.current.cancel("组件卸载,请求取消");
+      }
+    };
+  }, []);
 
   const handleClick = () => {
     if (currentPage === "/pages/showpage") {
@@ -25,9 +35,10 @@ const SearchInput = () => {
       router.push("/pages/showpage");
     }
   };
-  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
+  const handleSubmit = debounce(async () => {
     if (!ifAuth) {
+      console.log("请先进行登录");
+
       toast({
         description: "请先进行登录",
         variant: "destructive",
@@ -38,6 +49,7 @@ const SearchInput = () => {
     console.log(query);
 
     if (!query.trim()) {
+      console.log("搜索内容不能为空");
       toast({
         description: "搜索内容不能为空",
         variant: "destructive",
@@ -45,34 +57,55 @@ const SearchInput = () => {
       return;
     }
     try {
-      const response = await axios.post("/api/text2sql", {
-        question: query.trim(),
-      });
+      if (cancelTokenRef.current) {
+        cancelTokenRef.current.cancel("之前的请求取消");
+      }
+
+      cancelTokenRef.current = axios.CancelToken.source();
+
+      const response = await axios.post(
+        "/api/text2sql",
+        {
+          question: query.trim(),
+        },
+        {
+          cancelToken: cancelTokenRef.current.token,
+        }
+      );
       const data = response.data;
       console.log(data);
 
       if (data.status === 200 && data.success) {
         setSQL(data.data);
         setColumns(data.columns);
+        console.log("成功实现 text to sql");
+
         toast({
           description: "成功实现 text to sql",
         });
+        cancelTokenRef.current = null;
         router.push("/pages/virtualizedList");
       } else {
         switch (data.status) {
           case 400:
+            console.log("未登录错误");
+
             toast({
               description: "未登录错误",
               variant: "destructive",
             });
             break;
           case 401:
+            console.log("请求错误");
+
             toast({
               description: "请求错误",
               variant: "destructive",
             });
             break;
           default:
+            console.log("请求错误");
+
             toast({
               description: "请求错误",
               variant: "destructive",
@@ -81,20 +114,30 @@ const SearchInput = () => {
       }
     } catch (error: any) {
       // console.error(error.response.data.message);
+      if (axios.isCancel(error)) {
+        console.error("请求被取消:", error.message);
+        return;
+      }
       console.error(error);
       const errorMessage = error.response.data.message || "请求错误";
       toast({
         description: `${errorMessage}`,
         variant: "destructive",
       });
-      throw error;
     }
+  }, 300);
+
+  const onSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    console.log("将要执行函数");
+    handleSubmit();
+    console.log("执行结束函数");
   };
 
   return (
     <form
       className="h-20 flex justify-center items-center w-full px-4 md:px-8"
-      onSubmit={handleSubmit}
+      onSubmit={onSubmit}
     >
       <div
         className="h-6 w-6 rounded-full bg-[#ff0000] text-primary-foreground mr-5"
