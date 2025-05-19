@@ -14,6 +14,7 @@ const SearchInput = () => {
   const { status } = useSession();
   const { toast } = useToast();
   const [query, setQuery] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
   const { setSQL, setColumns } = useSQLStore();
   const ifAuth = status === "authenticated";
   const router = useRouter();
@@ -43,6 +44,7 @@ const SearchInput = () => {
         description: "请先进行登录",
         variant: "destructive",
       });
+      setIsLoading(false); // 重置加载状态
       return;
     }
 
@@ -54,6 +56,7 @@ const SearchInput = () => {
         description: "搜索内容不能为空",
         variant: "destructive",
       });
+      setIsLoading(false); // 重置加载状态
       return;
     }
     try {
@@ -84,6 +87,7 @@ const SearchInput = () => {
           description: "成功实现 text to sql",
         });
         cancelTokenRef.current = null;
+        setIsLoading(false); // 重置加载状态
         router.push("/pages/virtualizedList");
       } else {
         switch (data.status) {
@@ -104,32 +108,34 @@ const SearchInput = () => {
             });
             break;
           default:
-            console.log("请求错误");
-
-            toast({
-              description: "请求错误",
-              variant: "destructive",
-            });
+            console.log("请求错误");              toast({
+                description: "请求错误",
+                variant: "destructive",
+              });
+          }
         }
-      }
-    } catch (error: any) {
+        setIsLoading(false); // 错误状态下也重置加载状态
+      }catch (error: any) {
       // console.error(error.response.data.message);
       if (axios.isCancel(error)) {
         console.error("请求被取消:", error.message);
+        setIsLoading(false); // 请求取消时也需要重置加载状态
         return;
       }
       console.error(error);
-      const errorMessage = error.response.data.message || "请求错误";
+      const errorMessage = error.response?.data?.message || "请求错误";
       toast({
         description: `${errorMessage}`,
         variant: "destructive",
       });
+      setIsLoading(false); // 错误时重置加载状态
     }
   }, 300);
 
   const onSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     console.log("将要执行函数");
+    setIsLoading(true); // 设置加载状态为 true
     handleSubmit();
     console.log("执行结束函数");
   };
@@ -170,8 +176,19 @@ const SearchInput = () => {
             </svg>
           </div>
         </div>
-        <Button className="bg-[#ff0000] hover:bg-red-700 text-white font-medium h-11 px-6 rounded-lg shadow-sm transition-colors">
-          Search
+        <Button 
+          className="bg-[#ff0000] hover:bg-red-700 text-white font-medium h-11 px-6 rounded-lg shadow-sm transition-colors"
+          disabled={isLoading}
+        >
+          {isLoading ? (
+            <div className="flex items-center">
+              <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+              </svg>
+              搜索中...
+            </div>
+          ) : "Search"}
         </Button>
       </div>
     </form>
