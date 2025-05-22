@@ -28,10 +28,12 @@ const PieChartData = () => {
           }),
           axios.get("/api/pieData"),
         ]);
-        data =
-          dataFromCache || (response.status === 200 && response.data.success)
-            ? response.data.data
-            : null;
+        data = dataFromCache || 
+          (response.status === 304) ? 
+            dataFromCache : // 如果是304，使用缓存数据
+          (response.status === 200 && response.data.success) ?
+            response.data.data : 
+            null;
 
         // console.log(data);
 
@@ -47,6 +49,13 @@ const PieChartData = () => {
           });
 
           // console.log(listenMessages);
+
+          // 保存数据到 sessionStorage，以便在收到 304 响应时使用
+          try {
+            sessionStorage.setItem(cacheKey, JSON.stringify(data));
+          } catch (error) {
+            console.error('Failed to cache data:', error);
+          }
 
           setListen(listenMessages);
         }
