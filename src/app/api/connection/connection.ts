@@ -7,7 +7,9 @@ const forwardPort = 3306;
 let pool: mysql.Pool | null = null;
 let sshClient: Client | null = null;
 let lastConnectTime: number = 0;
-const CONNECTION_TIMEOUT = 10 * 1000 * 60 * 3;
+// 定义常量使其更易读，3小时的超时时间（毫秒）
+const HOUR_IN_MS = 60 * 60 * 1000;
+const CONNECTION_TIMEOUT = 3 * HOUR_IN_MS;
 
 const connectDBSSH = async () => {
   const currentTime = Date.now();
@@ -87,6 +89,7 @@ const connectDBSSH = async () => {
               // (await pool).ping();
               pool = newPool; // 更新全局 Pool
               sshClient = conn;
+              lastConnectTime = Date.now(); // 重要：更新最后连接时间
 
               lastConnectTime = Date.now();
               resolve({ connection: pool, conn });
