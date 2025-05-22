@@ -28,10 +28,12 @@ const AlbumDateDisplay = () => {
           }),
           axios.get("/api/dataStatics"),
         ]);
-        data =
-          dataFromCache || (response.status === 200 && response.data.success)
-            ? response.data.data
-            : null;
+        data = dataFromCache || 
+          (response.status === 304) ? 
+            dataFromCache : // 如果是304，使用缓存数据
+          (response.status === 200 && response.data.success) ?
+            response.data.data : 
+            null;
 
         if (data) {
           const dataMessages: AlbumMessage[] = [];
@@ -46,6 +48,13 @@ const AlbumDateDisplay = () => {
 
             dataMessages.push(newAlbum);
           });
+
+          // 保存数据到 sessionStorage，以便在收到 304 响应时使用
+          try {
+            sessionStorage.setItem(cacheKey, JSON.stringify(data));
+          } catch (error) {
+            console.error('Failed to cache data:', error);
+          }
 
           setAlbum(dataMessages);
         }
