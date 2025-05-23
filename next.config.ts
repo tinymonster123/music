@@ -53,9 +53,12 @@ const nextConfig: NextConfig = withTM({
   webpack(config: WebpackConfig, { dev, isServer }) {
     config.module = config.module ?? {};
     config.module.rules = config.module.rules ?? [];
+    
+    // Improved SVG handling
     config.module.rules.push({
       test: /\.svg$/,
-      use: ["@svgr/webpack"],
+      issuer: /\.[jt]sx?$/,
+      use: ['@svgr/webpack'],
     });
 
     // 客户端配置
