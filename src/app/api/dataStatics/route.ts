@@ -31,8 +31,7 @@ const GET = async (request: Request) => {
     const [rows] = await connection.query(`
             SELECT album_date_created, album_id 
             FROM raw_albums  
-            ORDER BY album_id
-            LIMIT 1000;
+            ORDER BY album_id;
         `);
 
     return NextResponse.json(
