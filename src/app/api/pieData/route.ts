@@ -28,42 +28,48 @@ const GET = async (request: Request) => {
       },
     });
   }
+  
+  let connection;
+  let conn;
+  
   try {
-    const { connection, conn } = (await connectDBSSH()) as DatabaseConnection;
-
-    // 先查询总记录数
+    console.log("开始获取数据库连接...");
+    ({ connection, conn } = (await connectDBSSH()) as DatabaseConnection);
+    console.log("数据库连接成功");
+    
+    // 1. 首先查询总记录数
+    console.log("执行总记录数统计查询...");
     const [countResult] = await connection.query(`
-        SELECT COUNT(*) as total FROM raw_albums;
+      SELECT COUNT(*) as total FROM raw_albums;
     `);
     
     const totalCount = countResult[0]?.total || 0;
-    console.log('Total records in database:', totalCount);
-
-    // 查询数据，按播放量降序排列
+    console.log(`数据库中的总记录数: ${totalCount}`);
+    
+    // 2. 尝试获取所有专辑，但增加最大限制以防止潜在问题
+    console.log("执行全量专辑列表查询...");
     const [rows] = await connection.query(`
-        SELECT album_listens, album_title  
-        FROM raw_albums  
-        ORDER BY album_listens DESC
-        LIMIT 10000;
+      SELECT album_listens, album_title  
+      FROM raw_albums  
+      ORDER BY album_listens DESC
+      LIMIT 500000;
     `);
 
-    console.log('Records returned by query:', rows.length);
-    console.log('Sample data:', rows.slice(0, 3));
-
-    try {
-        // 安全关闭连接
-        if (connection) await connection.end();
-        if (conn) conn.end();
-    } catch (closeError) {
-        console.error('Error closing connections:', closeError);
+    console.log(`查询返回的记录数: ${rows.length}`);
+    if (rows.length > 0) {
+      console.log("最高播放量专辑:", rows[0]);
+      console.log("最低播放量专辑:", rows[rows.length - 1]);
     }
 
     return NextResponse.json(
       {
         success: true,
         data: rows,
-        totalRecords: totalCount,
-        returnedRecords: rows.length
+        debug: {
+          totalRecordsInDb: totalCount,
+          returnedRecords: rows.length,
+          queryType: "完整查询"
+        }
       },
       {
         status: 200,
@@ -75,14 +81,29 @@ const GET = async (request: Request) => {
       }
     );
   } catch (error) {
-    console.error(error);
+    console.error("获取专辑数据时出错:", error);
     return NextResponse.json(
       {
         success: false,
+        error: String(error),
         data: "Error",
       },
       { status: 500 }
     );
+  } finally {
+    // 确保连接总是被关闭
+    try {
+      if (connection) {
+        console.log("关闭数据库连接...");
+        await connection.end();
+      }
+      if (conn) {
+        console.log("关闭SSH连接...");
+        conn.end();
+      }
+    } catch (closeError) {
+      console.error("关闭连接时出错:", closeError);
+    }
   }
 };
 
