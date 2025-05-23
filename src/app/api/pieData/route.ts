@@ -31,22 +31,39 @@ const GET = async (request: Request) => {
   try {
     const { connection, conn } = (await connectDBSSH()) as DatabaseConnection;
 
+    // 先查询总记录数
+    const [countResult] = await connection.query(`
+        SELECT COUNT(*) as total FROM raw_albums;
+    `);
+    
+    const totalCount = countResult[0]?.total || 0;
+    console.log('Total records in database:', totalCount);
+
+    // 查询数据，按播放量降序排列
     const [rows] = await connection.query(`
-            SELECT album_listens, album_title  
-            FROM raw_albums  
-            ORDER BY album_listens
-            LIMIT 1000;
-        `);
+        SELECT album_listens, album_title  
+        FROM raw_albums  
+        ORDER BY album_listens DESC
+        LIMIT 10000;
+    `);
 
-    // console.log(rows);
+    console.log('Records returned by query:', rows.length);
+    console.log('Sample data:', rows.slice(0, 3));
 
-    // await connection.end();
-    // conn.end();
+    try {
+        // 安全关闭连接
+        if (connection) await connection.end();
+        if (conn) conn.end();
+    } catch (closeError) {
+        console.error('Error closing connections:', closeError);
+    }
 
     return NextResponse.json(
       {
         success: true,
         data: rows,
+        totalRecords: totalCount,
+        returnedRecords: rows.length
       },
       {
         status: 200,
