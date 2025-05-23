@@ -24,24 +24,21 @@ import useListenStore, { PieData } from "@/app/hooks/listensdata";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Badge } from "@/components/ui/badge";
 
-// 娣囶喗鏁兼稉杞扮瑢InteractiveBar鐎瑰苯鍙忔稉鈧懛瀵告畱妫版粏澹婄化鑽ょ埠
 const colorConfig = {
-  baseColor: "#ff0000", // 涓昏壊璋冿紝绾孩鑹�
+  baseColor: "#ff0000", // 主色
   gradientFrom: "#ff0000",
-  gradientTo: "#ff6666", // 杈冩祬鐨勭孩鑹�
-  hoverColor: "#cc0000", // 娣辩孩鑹诧紝鎮仠鑹�
+  gradientTo: "#ff6666", // 渐变色
+  hoverColor: "#cc0000", // 悬停色
 };
 
-// 瀹氫箟楗煎浘鐨勬墖褰㈤鑹叉暟缁勶紝浠ヤ富鑹茶皟涓轰腑蹇冩墿灞�
 const CHART_COLORS = [
-  colorConfig.baseColor, // 涓昏壊璋� - 绾孩鑹�
-  "#cc0000", // 娣辩孩鑹�
-  "#ff3333", // 浜孩鑹�
-  "#ff6666", // 娴呯孩鑹�
-  "#990000", // 鏆楃孩鑹�
+  colorConfig.baseColor, // 主色
+  "#cc0000",
+  "#ff3333",
+  "#ff6666",
+  "#990000",
 ];
 
-// 閸斻劍鈧胶鏁撻幋鎰禈鐞涖劑鍘ょ純锟�
 const generateChartConfig = (data: PieData[]) => {
   const config: Record<string, any> = {
     listens: {
@@ -50,7 +47,6 @@ const generateChartConfig = (data: PieData[]) => {
     },
   };
 
-  // 閸欐牕澧�5娑擃亝鏆熼幑顕€銆嶇拋鍓х枂妫版粏澹�
   data.slice(0, 5).forEach((item, index) => {
     const shortTitle =
       item.title.length > 15 ? `${item.title.substring(0, 15)}...` : item.title;
@@ -69,7 +65,6 @@ const PieBar = () => {
   const [loading, setLoading] = React.useState(true);
   const [activeIndex, setActiveIndex] = React.useState<number | null>(null);
 
-  // 婢跺嫮鎮婇弫鐗堝祦閿涙艾褰囬崜锟�5娑擃亝鏁归崥顒勫櫤閺堚偓婢堆呮畱娑撴捁绶�
   const processedListenData = React.useMemo(() => {
     if (!listendata || listendata.length === 0) {
       return [];
@@ -77,13 +72,11 @@ const PieBar = () => {
 
     setLoading(false);
 
-    // 婢跺秴鍩楅弫鎵矋閿涘本甯撴惔蹇ョ礉楠炶泛褰囬崜锟�5娑擄拷
     return [...listendata]
-      .filter((item) => item.listens > 0) // 鏉╁洦鎶ら幒澶嬫暪閸氼剟鍣烘稉锟�0閻拷
-      .sort((a, b) => b.listens - a.listens) // 閹稿鏁归崥顒勫櫤闂勫秴绨�
-      .slice(0, 5) // 閸欐牕澧�5娑擄拷
+      .filter((item) => item.listens > 0)
+      .sort((a, b) => b.listens - a.listens)
+      .slice(0, 5)
       .map((item, index) => {
-        // 娑撶儤鐦℃稉顏堛€嶉悽鐔稿灇濞撴劕褰塈D
         const gradientId = `pieGradient-${index}`;
         return {
           ...item,
@@ -93,23 +86,19 @@ const PieBar = () => {
       });
   }, [listendata]);
 
-  // 鐠侊紕鐣婚幀缁樻暪閸氼剟鍣�
   const totalListens = React.useMemo(() => {
     return processedListenData.reduce((acc, curr) => acc + curr.listens, 0);
   }, [processedListenData]);
 
-  // 閸斻劍鈧胶鏁撻幋鎰禈鐞涖劑鍘ょ純锟�
   const chartConfig = React.useMemo(
     () => generateChartConfig(processedListenData),
     [processedListenData]
   );
 
-  // 鐠侊紕鐣婚惂鎯у瀻濮ｏ拷
   const getPercentage = (count: number) => {
     return totalListens > 0 ? Math.round((count / totalListens) * 100) : 0;
   };
 
-  // 閼奉亜鐣炬稊濉紀oltip閸愬懎顔�
   const CustomTooltip = ({ active, payload }: any) => {
     if (active && payload && payload.length) {
       const data = payload[0].payload;
@@ -144,7 +133,6 @@ const PieBar = () => {
     setActiveIndex(null);
   };
 
-  // 鏇存柊娓愬彉瀹氫箟
   const renderGradients = () => {
     return processedListenData.map((entry, index) => (
       <linearGradient
@@ -224,7 +212,6 @@ const PieBar = () => {
                   stroke="#ffffff"
                 >
                   {processedListenData.map((entry, index) => (
-                    // 鏇存柊Cell鏍峰紡
                     <Cell
                       key={`cell-${index}`}
                       fill={
@@ -247,7 +234,6 @@ const PieBar = () => {
                       if (viewBox && "cx" in viewBox && "cy" in viewBox) {
                         return (
                           <g>
-                            {/* 濞ｈ濮炲ù鍛板閼冲本娅欓崷鍡楄埌 */}
                             <circle
                               cx={viewBox.cx}
                               cy={viewBox.cy}
