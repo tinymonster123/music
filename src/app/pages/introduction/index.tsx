@@ -31,7 +31,7 @@ const Introduction = () => {
           </div>
 
           {/* 右侧区域 - SVG字母和文本内容 */}
-          <div className="flex flex-col items-center md:items-start space-y-8" translate="no">
+          <div className="flex flex-col items-center md:items-start space-y-8 notranslate">
             <TextFade
               direction="down"
               duration={5}
