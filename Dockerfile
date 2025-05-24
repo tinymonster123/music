@@ -86,6 +86,8 @@ COPY --from=builder /app/.next/standalone ./
 COPY --from=builder /app/src/assets ./src/assets
 COPY --from=builder /app/.next/static ./.next/static
 COPY --from=builder /app/public ./public
+COPY --from=builder /app/.next/static/css ./.next/static/css
+COPY --from=builder /app/.next/server ./server
 
 # 设置正确的文件所有权
 RUN chown -R nextjs:nextjs /app
