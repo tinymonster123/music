@@ -83,6 +83,7 @@ RUN mkdir -p /app/src/ssh && chmod 700 /app/src/ssh
 
 # 复制应用文件
 COPY --from=builder /app/.next/standalone ./
+COPY --from=builder /app/src/assets ./src/assets
 COPY --from=builder /app/.next/static ./.next/static
 COPY --from=builder /app/public ./public
 
