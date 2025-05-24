@@ -12,6 +12,7 @@ export default {
     "bg-foreground",
     // 添加其他可能需要的前缀
     "border-foreground",
+    "animate-spin", // 添加 animate-spin 类，防止生产环境优化时被移除
   ],
   theme: {
     extend: {
