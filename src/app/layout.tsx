@@ -54,7 +54,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className={`${monaSans.variable} ${sourceSerif.variable} ${helveticaRounded.variable}`}>
-      <body className="antialiased">
+      <body className={`${monaSans.variable} ${sourceSerif.variable} ${helveticaRounded.variable} font-mona antialiased`}>
         {children}
         <Toaster />
       </body>
