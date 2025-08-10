@@ -1,4 +1,4 @@
-version: '3.8'
+version: "3.8"
 
 services:
   app:
@@ -31,7 +31,6 @@ services:
         source: /run/secrets/ssh_key_middle
         target: /app/ssh_key_middle_file
         read_only: true
-
     secrets:
       - ssh_key
       - database_url
@@ -52,12 +51,22 @@ services:
       - auth_github_id
       - auth_github_secret
     deploy:
+      replicas: 2
+      update_config:
+        parallelism: 1
+        delay: 5s
+        order: start-first
       resources:
         limits:
           memory: 1G
       restart_policy:
         condition: on-failure
         max_attempts: 3
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/api/health"]
+      interval: 10s
+      timeout: 3s
+      retries: 3
 
 secrets:
   ssh_key_middle:
@@ -95,4 +104,4 @@ secrets:
   auth_github_id:
     file: ./secrets/auth_github_id.txt
   auth_github_secret:
-    file: ./secrets/auth_github_secret.txt 
+    file: ./secrets/auth_github_secret.txt
