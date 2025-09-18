@@ -1,6 +1,10 @@
 import connectDBSSH from "../connection/connection";
 import { NextResponse } from "next/server";
-import { DatabaseConnection } from "../pieData/route";
+
+interface DatabaseConnection {
+  connection: any;
+  conn: any;
+}
 
 // 生成一致的 Last-Modified 头
 const generateLastModified = () => {
