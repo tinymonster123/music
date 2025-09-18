@@ -3,6 +3,8 @@ import localFont from "next/font/local";
 import React from "react";
 import "./globals.css";
 import { Toaster } from "@/components/ui/toaster";
+import { SessionProvider } from "next-auth/react";
+import { auth } from "../../auth";
 
 const monaSans = localFont({
   src: "../assets/font/Mona-Sans.ttf",
@@ -47,17 +49,23 @@ export const metadata: Metadata = {
 //   });
 // }
 
-export default function RootLayout({
+const RootLayout = async ({
   children,
 }: Readonly<{
   children: React.ReactNode;
-}>) {
+}>) => {
+  const session = await auth();
+
   return (
     <html lang="en" className={`${monaSans.variable} ${sourceSerif.variable} ${helveticaRounded.variable}`}>
       <body className={`${monaSans.variable} ${sourceSerif.variable} ${helveticaRounded.variable} font-mona antialiased`}>
-        {children}
-        <Toaster />
+        <SessionProvider session={session}>
+          {children}
+          <Toaster />
+        </SessionProvider>
       </body>
     </html>
   );
-}
+};
+
+export default RootLayout;
