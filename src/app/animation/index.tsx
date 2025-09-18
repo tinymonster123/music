@@ -330,7 +330,7 @@ const splitAndReplace = (string) => {
 };
 
 /* Method to get the first child */
-function getFirstChild(slots) {
+const getFirstChild = (slots) => {
   if (!slots || slots.length === 0) return null;
   return slots[0]; // 闂佺儵鏅涢悺銊ф暜鐎涙ɑ浜ら柡鍌涘缁€鈧紓浣诡殢閸忔稓绮╃€涙ḿ鈻旀い蹇撳鐢绱掓潏鈺侇€撶紒杈ㄧ箞瀵噣鎮╃紒妯圭帛婵炶揪缍€濞夋洟寮敓锟� React.Children
 }
