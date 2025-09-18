@@ -60,3 +60,5 @@ src/ssh/*
 # Docker secrets
 secrets/
 *.txt
+
+PROJECT_OPTIMIZATION.*
